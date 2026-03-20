@@ -1,9 +1,12 @@
 // Pastikan HTML sudah kebaca
 document.addEventListener("DOMContentLoaded", function () {
 
-    const button = document.getElementById("runBtn");
+    document.getElementById("runBtn").addEventListener("click", function () {
+        alert("BUTTON WORKING");
 
-    button.addEventListener("click", runSimulation);
+        let output = document.getElementById("outputText");
+        output.value = "TEST OUTPUT MASUK";
+    });
 
 });
 
