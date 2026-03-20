@@ -1,37 +1,34 @@
-function step1() {
-    alert("Initializing cat agents with personality traits...");
-}
+function runSimulation() {
 
-function step2() {
-    alert("Simulating interactions between cats...");
-}
-
-function step3() {
     let numCats = document.getElementById("numCats").value;
+    let houseSize = document.getElementById("houseSize").value;
+    let litterBoxes = document.getElementById("litterBoxes").value;
+    let feedingStations = document.getElementById("feedingStations").value;
 
-    let result = "Simulation Result:\n";
-    result += "Conflict probability: Medium\n";
-    result += "Average stress level: High\n";
-    result += "Recommendation: Add more feeding stations\n";
+    // Dummy results (mockup)
+    let conflictProb = Math.random().toFixed(2);
+    let stressLevel = (Math.random() * 10).toFixed(2);
 
-    document.getElementById("outputText").value = result;
+    document.getElementById("outputText").value =
+        "Conflict Probability: " + conflictProb +
+        "\nStress Level: " + stressLevel +
+        "\n(Mockup only)";
 
-    // simple territory visualization
-    let canvas = document.getElementById("mapCanvas");
+    // Canvas visualization
+    let canvas = document.getElementById("outputCanvas");
     let ctx = canvas.getContext("2d");
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // draw fake territories
-    ctx.beginPath();
-    ctx.arc(100, 120, 50, 0, 2 * Math.PI);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(200, 100, 50, 0, 2 * Math.PI);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(300, 140, 50, 0, 2 * Math.PI);
-    ctx.stroke();
+    for (let i = 0; i < numCats; i++) {
+        ctx.beginPath();
+        ctx.arc(
+            Math.random() * canvas.width,
+            Math.random() * canvas.height,
+            20,
+            0,
+            2 * Math.PI
+        );
+        ctx.stroke();
+    }
 }
