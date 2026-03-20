@@ -1,18 +1,31 @@
+// Pastikan HTML sudah kebaca
+document.addEventListener("DOMContentLoaded", function () {
+
+    const button = document.getElementById("runBtn");
+
+    button.addEventListener("click", runSimulation);
+
+});
+
 function runSimulation() {
 
     let numCats = document.getElementById("numCats").value;
-    let houseSize = document.getElementById("houseSize").value;
-    let litterBoxes = document.getElementById("litterBoxes").value;
-    let feedingStations = document.getElementById("feedingStations").value;
 
-    // Dummy results (mockup)
+    if (!numCats) {
+        alert("Please enter number of cats!");
+        return;
+    }
+
+    let output = document.getElementById("outputText");
+
+    // Dummy simulation (mockup)
     let conflictProb = Math.random().toFixed(2);
     let stressLevel = (Math.random() * 10).toFixed(2);
 
-    document.getElementById("outputText").value =
+    output.value =
         "Conflict Probability: " + conflictProb +
         "\nStress Level: " + stressLevel +
-        "\n(Mockup only)";
+        "\n(Mockup result)";
 
     // Canvas visualization
     let canvas = document.getElementById("outputCanvas");
