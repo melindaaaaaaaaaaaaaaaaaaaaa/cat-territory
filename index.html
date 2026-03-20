@@ -1,69 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Computation Application Mockup - Multi Cat Simulation</title>
+    <title>Computation application mockup</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>Computation Application Mockup</h1>
+<h1>Computation application mockup</h1>
 <p><b>Multi-Cat Household Territory Simulation</b></p>
 
 <div class="container">
 
-    <!-- INPUT -->
     <h3>Input Parameters</h3>
 
     <input type="number" id="numCats" placeholder="Number of Cats">
 
-    <textarea id="traits" rows="4" placeholder="Enter personality traits (dominance, stress, tolerance) per cat..."></textarea>
+    <textarea id="traits" rows="4"
+    placeholder="Enter personality traits (dominance, stress, tolerance) per cat..."></textarea>
 
     <input type="number" id="houseSize" placeholder="House Size (m²)">
     <input type="number" id="litterBoxes" placeholder="Number of Litter Boxes">
     <input type="number" id="feedingStations" placeholder="Number of Feeding Stations">
 
-    <!-- BUTTON -->
     <h3>Simulation Controls</h3>
     <button id="runBtn">Run Simulation (3 Processes)</button>
 
-    <!-- OUTPUT -->
     <h3>Outputs</h3>
 
-    <textarea id="outputText" rows="5" placeholder="Simulation results will appear here..."></textarea>
+    <textarea id="outputText" rows="5"
+    placeholder="Simulation results will appear here..."></textarea>
 
     <canvas id="outputCanvas" width="400" height="300"></canvas>
 
 </div>
 
-<!-- DESCRIPTION -->
 <div class="container description">
     <h3>Description</h3>
 
     <p>
-        This computation application mockup simulates territorial behavior among multiple cats in a household.
-        Each cat is modeled as an agent with behavioral traits.
+        This computation application mockup simulates territorial behavior among multiple cats
+        using agent-based modeling.
     </p>
 
     <h4>How to Use</h4>
     <ul>
-        <li>Enter the number of cats</li>
-        <li>Provide personality traits</li>
+        <li>Enter number of cats</li>
+        <li>Fill personality traits</li>
         <li>Set house parameters</li>
-        <li>Click "Run Simulation"</li>
+        <li>Click Run Simulation</li>
     </ul>
 
-    <h4>Numerical Concepts & Algorithms</h4>
+    <h4>Numerical Concepts</h4>
     <ul>
         <li>Agent-Based Modeling (ABM)</li>
-        <li>Monte Carlo Simulation</li>
-        <li>Nonlinear interaction model</li>
+        <li>Monte Carlo simulation</li>
+        <li>Nonlinear interaction</li>
         <li>Time-stepping iteration</li>
     </ul>
-
 </div>
 
-<script src="script.js"></script>
+<!-- PENTING: defer -->
+<script src="script.js" defer></script>
 
 </body>
 </html>
