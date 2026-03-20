@@ -13,13 +13,14 @@
 
     <h3>Input</h3>
 
-    <input type="number" id="numCats" placeholder="Number of cats">
+    <div class="input-grid">
+        <input type="number" placeholder="Number of cats">
+        <input type="number" placeholder="House size (m^2)">
+        <input type="number" placeholder="Number of litter boxes">
+        <input type="number" placeholder="Feeding stations">
+    </div>
 
-    <textarea id="catTraits" placeholder="Enter traits (dominance, stress, tolerance per cat)"></textarea>
-
-    <input type="number" placeholder="House size (m^2)">
-    <input type="number" placeholder="Number of litter boxes">
-    <input type="number" placeholder="Feeding stations">
+    <textarea placeholder="Enter traits..."></textarea>
 
     <h3>Process</h3>
     <button onclick="step1()">Step 1: Initialize Agents</button>
