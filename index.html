@@ -1,37 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Multi-Cat Territory Simulation</title>
+    <title>Computation Application Mockup - Multi Cat Simulation</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>🐱 Multi-Cat Territory Simulation (Mockup)</h1>
+<h1>Computation Application Mockup</h1>
+<p><b>Multi-Cat Household Territory Simulation</b></p>
 
 <div class="container">
 
-    <h3>Input</h3>
+    <!-- INPUT -->
+    <h3>Input Parameters</h3>
 
-    <div class="input-grid">
-        <input type="number" placeholder="Number of cats">
-        <input type="number" placeholder="House size (m^2)">
-        <input type="number" placeholder="Number of litter boxes">
-        <input type="number" placeholder="Feeding stations">
-    </div>
+    <input type="number" id="numCats" placeholder="Number of Cats">
 
-    <textarea placeholder="Enter traits..."></textarea>
+    <textarea id="traits" rows="4" placeholder="Enter personality traits (dominance, stress, tolerance) per cat..."></textarea>
 
-    <h3>Process</h3>
-    <button onclick="step1()">Step 1: Initialize Agents</button>
-    <button onclick="step2()">Step 2: Simulate Interaction</button>
-    <button onclick="step3()">Step 3: Generate Results</button>
+    <input type="number" id="houseSize" placeholder="House Size (m²)">
+    <input type="number" id="litterBoxes" placeholder="Number of Litter Boxes">
+    <input type="number" id="feedingStations" placeholder="Number of Feeding Stations">
 
-    <h3>Output</h3>
+    <!-- BUTTON -->
+    <h3>Simulation Controls</h3>
+    <button onclick="runSimulation()">Run Simulation (3 Processes)</button>
 
-    <textarea id="outputText" placeholder="Simulation results..."></textarea>
+    <!-- OUTPUT -->
+    <h3>Outputs</h3>
 
-    <canvas id="mapCanvas" width="400" height="250"></canvas>
+    <textarea id="outputText" rows="5" placeholder="Simulation results will appear here..."></textarea>
+
+    <canvas id="outputCanvas" width="400" height="300"></canvas>
+
+</div>
+
+<!-- DESCRIPTION -->
+<div class="container description">
+    <h3>Description</h3>
+
+    <p>
+        This computation application mockup simulates territorial behavior among multiple cats in a household.
+        Each cat is modeled as an agent with behavioral traits.
+    </p>
+
+    <h4>How to Use</h4>
+    <ul>
+        <li>Enter the number of cats</li>
+        <li>Provide personality traits</li>
+        <li>Set house parameters</li>
+        <li>Click "Run Simulation"</li>
+    </ul>
+
+    <h4>Numerical Concepts & Algorithms</h4>
+    <ul>
+        <li>Agent-Based Modeling (ABM)</li>
+        <li>Monte Carlo Simulation</li>
+        <li>Nonlinear interaction model</li>
+        <li>Time-stepping iteration</li>
+    </ul>
 
 </div>
 
