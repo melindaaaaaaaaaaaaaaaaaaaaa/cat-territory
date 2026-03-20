@@ -1,33 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cat Behavior Analyzer</title>
+    <title>Multi-Cat Territory Simulation</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>🐱 Cat Behavior Pattern Analyzer</h1>
+<h1>🐱 Multi-Cat Territory Simulation (Mockup)</h1>
 
 <div class="container">
 
     <h3>Input</h3>
-    <textarea id="historyData" placeholder="Enter historical data..."></textarea>
 
-    <input type="number" id="sleep" placeholder="Sleep hours">
-    <input type="number" id="eat" placeholder="Feeding frequency">
-    <input type="number" id="play" placeholder="Playtime duration">
-    <input type="number" id="litter" placeholder="Litter box frequency">
+    <input type="number" id="numCats" placeholder="Number of cats">
+
+    <textarea id="catTraits" placeholder="Enter traits (dominance, stress, tolerance per cat)"></textarea>
+
+    <input type="number" placeholder="House size (m^2)">
+    <input type="number" placeholder="Number of litter boxes">
+    <input type="number" placeholder="Feeding stations">
 
     <h3>Process</h3>
-    <button onclick="step1()">Step 1: Load Data</button>
-    <button onclick="step2()">Step 2: Analyze Pattern</button>
-    <button onclick="step3()">Step 3: Detect Anomaly</button>
+    <button onclick="step1()">Step 1: Initialize Agents</button>
+    <button onclick="step2()">Step 2: Simulate Interaction</button>
+    <button onclick="step3()">Step 3: Generate Results</button>
 
     <h3>Output</h3>
-    <textarea id="outputText" placeholder="Results..."></textarea>
 
-    <canvas id="graphCanvas" width="400" height="200"></canvas>
+    <textarea id="outputText" placeholder="Simulation results..."></textarea>
+
+    <canvas id="mapCanvas" width="400" height="250"></canvas>
 
 </div>
 
