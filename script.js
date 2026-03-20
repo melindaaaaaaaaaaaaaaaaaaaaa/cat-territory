@@ -1,35 +1,37 @@
 function step1() {
-    alert("Loading historical data...");
+    alert("Initializing cat agents with personality traits...");
 }
 
 function step2() {
-    alert("Analyzing behavior patterns...");
+    alert("Simulating interactions between cats...");
 }
 
 function step3() {
-    let sleep = document.getElementById("sleep").value;
+    let numCats = document.getElementById("numCats").value;
 
-    let result = "Behavior stability score: 80%\n";
-
-    if (sleep > 18) {
-        result += "⚠️ Anomaly detected: Too much sleep!";
-    } else {
-        result += "No anomaly detected.";
-    }
+    let result = "Simulation Result:\n";
+    result += "Conflict probability: Medium\n";
+    result += "Average stress level: High\n";
+    result += "Recommendation: Add more feeding stations\n";
 
     document.getElementById("outputText").value = result;
 
-    // draw simple graph
-    let canvas = document.getElementById("graphCanvas");
+    // simple territory visualization
+    let canvas = document.getElementById("mapCanvas");
     let ctx = canvas.getContext("2d");
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // draw fake territories
     ctx.beginPath();
-    ctx.moveTo(0, 150);
-    ctx.lineTo(100, 120);
-    ctx.lineTo(200, 130);
-    ctx.lineTo(300, 90);
-    ctx.lineTo(400, 100);
+    ctx.arc(100, 120, 50, 0, 2 * Math.PI);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(200, 100, 50, 0, 2 * Math.PI);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(300, 140, 50, 0, 2 * Math.PI);
     ctx.stroke();
 }
