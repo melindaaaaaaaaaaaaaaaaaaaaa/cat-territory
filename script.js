@@ -26,13 +26,12 @@ function generateCatForms() {
 
     container.innerHTML += `<button onclick="saveCats(${count})">Next</button>`;
 
-    // default semua new
     for (let i = 0; i < count; i++) {
         renderNewCat(i);
     }
 }
 
-// SWITCH UI
+// SWITCH
 function updateCatForm(i, total) {
     let type = document.getElementById(`type${i}`).value;
 
@@ -41,9 +40,17 @@ function updateCatForm(i, total) {
     } else {
         renderExistingCat(i, total);
     }
+
+    // refresh semua existing cat
+    for (let k = 0; k < total; k++) {
+        let t = document.getElementById(`type${k}`).value;
+        if (t === "old") {
+            renderExistingCat(k, total);
+        }
+    }
 }
 
-// NEW CAT FORM
+// NEW CAT
 function renderNewCat(i) {
     document.getElementById(`dynamic${i}`).innerHTML = `
         Dominance <input type="number" id="dom${i}" min="0" max="10"><br>
@@ -52,27 +59,35 @@ function renderNewCat(i) {
     `;
 }
 
-// EXISTING CAT FORM
+// EXISTING CAT (FIXED 🔥)
 function renderExistingCat(i, total) {
     let html = `<p>Hubungan dengan kucing lain:</p>`;
 
     for (let j = 0; j < total; j++) {
         if (j !== i) {
-            html += `
-                Kucing ${i+1} & ${j+1}:
-                <select id="rel_${i}_${j}">
-                    <option value="friend">Best Friends</option>
-                    <option value="roommate">Roommates</option>
-                    <option value="enemy">Tidak Cocok</option>
-                </select><br>
-            `;
+            let otherType = document.getElementById(`type${j}`)?.value;
+
+            if (otherType === "old") {
+                html += `
+                    Kucing ${i+1} & ${j+1}:
+                    <select id="rel_${i}_${j}">
+                        <option value="friend">Best Friends</option>
+                        <option value="roommate">Roommates</option>
+                        <option value="enemy">Tidak Cocok</option>
+                    </select><br>
+                `;
+            }
         }
+    }
+
+    if (html === `<p>Hubungan dengan kucing lain:</p>`) {
+        html += `<p>(Tidak ada kucing existing lain)</p>`;
     }
 
     document.getElementById(`dynamic${i}`).innerHTML = html;
 }
 
-// SAVE DATA
+// SAVE
 function saveCats(count) {
     cats = [];
     relations = [];
@@ -102,13 +117,17 @@ function saveCats(count) {
         if (type === "old") {
             for (let j = 0; j < count; j++) {
                 if (j !== i) {
-                    let relEl = document.getElementById(`rel_${i}_${j}`);
-                    if (relEl) {
-                        relations.push({
-                            i: i,
-                            j: j,
-                            type: relEl.value
-                        });
+                    let otherType = document.getElementById(`type${j}`).value;
+
+                    if (otherType === "old") {
+                        let relEl = document.getElementById(`rel_${i}_${j}`);
+                        if (relEl) {
+                            relations.push({
+                                i: i,
+                                j: j,
+                                type: relEl.value
+                            });
+                        }
                     }
                 }
             }
