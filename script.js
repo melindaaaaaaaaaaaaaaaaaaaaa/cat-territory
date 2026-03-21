@@ -1,127 +1,144 @@
 let cats = [];
+let resources = [];
 
-document.getElementById("generateInputs").onclick = function () {
+// warna random
+function getRandomColor() {
+    return "#" + Math.floor(Math.random()*16777215).toString(16);
+}
 
-    let num = document.getElementById("numCats").value;
-    let container = document.getElementById("catInputs");
+// tambah kucing
+function addCat() {
+    let name = document.getElementById("catName").value;
+    if (!name) return alert("Isi nama dulu!");
 
-    container.innerHTML = "";
-
-    for (let i = 0; i < num; i++) {
-        container.innerHTML += `
-        <div>
-            <h4>Cat ${i+1}</h4>
-            <input placeholder="Dominance (0-1)" id="d${i}">
-            <input placeholder="Stress (0-1)" id="s${i}">
-            <input placeholder="Tolerance (0-1)" id="t${i}">
-        </div>`;
-    }
-};
-
-document.getElementById("btnRun").onclick = function () {
-
-    let num = document.getElementById("numCats").value;
-    let house = document.getElementById("houseSize").value;
-    let litter = document.getElementById("litterBoxes").value;
-    let feed = document.getElementById("feedingStations").value;
-
-    cats = [];
-
-    for (let i = 0; i < num; i++) {
-        cats.push({
-            d: parseFloat(document.getElementById("d"+i).value),
-            s: parseFloat(document.getElementById("s"+i).value),
-            t: parseFloat(document.getElementById("t"+i).value)
-        });
-    }
-
-    // ===== MODEL =====
-    let avgD = cats.reduce((a,c)=>a+c.d,0)/num;
-    let avgT = cats.reduce((a,c)=>a+c.t,0)/num;
-
-    let resourceFactor = (parseInt(litter)+parseInt(feed))/num;
-    let spaceFactor = house/(num*20);
-
-    let conflict = (avgD*(1-avgT))/(resourceFactor+spaceFactor);
-    conflict = Math.min(Math.max(conflict,0),1);
-
-    let stress = (conflict*10).toFixed(2);
-
-    let social = conflict < 0.3 ? "Friendly 😇" :
-                 conflict < 0.6 ? "Roommates 😐" :
-                 "Conflict 😾";
-
-    let resourceStatus = (litter >= num+1 && feed >= num+1)
-        ? "Adequate"
-        : "Insufficient";
-
-    // ===== OUTPUT =====
-    document.getElementById("outputText").value =
-        "Conflict: "+conflict.toFixed(2)+
-        "\nStress: "+stress+
-        "\nSocial: "+social+
-        "\nResource: "+resourceStatus;
-
-    drawCanvas(conflict);
-};
-
-function drawCanvas(conflict) {
-
-    let canvas = document.getElementById("canvas");
-    let ctx = canvas.getContext("2d");
-
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    let positions = [];
-
-    cats.forEach((cat,i)=>{
-        let x = Math.random()*400+50;
-        let y = Math.random()*250+50;
-        let r = 20 + cat.d*20;
-
-        positions.push({x,y,r});
-
-        ctx.globalAlpha = 0.4;
-        ctx.fillStyle = getColor(i);
-        ctx.beginPath();
-        ctx.arc(x,y,r,0,2*Math.PI);
-        ctx.fill();
+    cats.push({
+        name: name,
+        color: getRandomColor(),
+        path: []
     });
 
-    // ===== DETECT OVERLAP =====
-    for(let i=0;i<positions.length;i++){
-        for(let j=i+1;j<positions.length;j++){
+    document.getElementById("catName").value = "";
+    alert("Kucing ditambahkan!");
+}
 
-            let dx = positions[i].x - positions[j].x;
-            let dy = positions[i].y - positions[j].y;
-            let dist = Math.sqrt(dx*dx + dy*dy);
+// tambah resource
+function addResource(type) {
+    resources.push({
+        type: type,
+        x: Math.random() * 480,
+        y: Math.random() * 480
+    });
 
-            if(dist < positions[i].r + positions[j].r){
+    drawMap();
+}
 
-                ctx.globalAlpha = 1;
-                ctx.fillStyle = "red";
-                ctx.font = "20px Arial";
-                ctx.fillText("!", (positions[i].x+positions[j].x)/2,
-                                   (positions[i].y+positions[j].y)/2);
+// gambar map
+function drawMap() {
+    let canvas = document.getElementById("mapCanvas");
+    let ctx = canvas.getContext("2d");
+
+    ctx.clearRect(0, 0, 500, 500);
+
+    resources.forEach(r => {
+        ctx.fillStyle = (r.type === "food") ? "green" : "brown";
+        ctx.fillRect(r.x, r.y, 12, 12);
+    });
+}
+
+// simulasi
+function runSimulation() {
+    if (cats.length === 0) return alert("Tambahin kucing dulu!");
+
+    let canvas = document.getElementById("mapCanvas");
+    let ctx = canvas.getContext("2d");
+
+    drawMap();
+
+    cats.forEach(cat => {
+        cat.path = [];
+
+        for (let i = 0; i < 50; i++) {
+            cat.path.push({
+                x: Math.random() * 500,
+                y: Math.random() * 500
+            });
+        }
+
+        ctx.beginPath();
+        ctx.strokeStyle = cat.color;
+        ctx.lineWidth = 2;
+
+        cat.path.forEach((p, i) => {
+            if (i === 0) ctx.moveTo(p.x, p.y);
+            else ctx.lineTo(p.x, p.y);
+        });
+
+        ctx.stroke();
+    });
+
+    detectConflict();
+    checkResources();
+}
+
+// deteksi konflik
+function detectConflict() {
+    let conflictCount = 0;
+
+    for (let i = 0; i < cats.length; i++) {
+        for (let j = i+1; j < cats.length; j++) {
+            let c1 = cats[i];
+            let c2 = cats[j];
+
+            for (let k = 0; k < c1.path.length; k++) {
+                let p1 = c1.path[k];
+                let p2 = c2.path[k];
+
+                let dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+
+                if (dist < 15) {
+                    conflictCount++;
+                }
             }
         }
     }
+
+    if (conflictCount > 0) {
+        document.getElementById("output").innerHTML =
+            "⚠️ Conflict detected! (" + conflictCount + " encounters)";
+    } else {
+        document.getElementById("output").innerHTML =
+            "✅ No conflict detected";
+    }
 }
 
-function getColor(i){
-    let colors = ["red","blue","green","orange","purple","brown"];
-    return colors[i % colors.length];
+// cek resource
+function checkResources() {
+    let foodCount = resources.filter(r => r.type === "food").length;
+    let litterCount = resources.filter(r => r.type === "litter").length;
+
+    let rec = "";
+
+    if (foodCount < cats.length + 1) {
+        rec += "🍽️ Tambah tempat makan!<br>";
+    }
+
+    if (litterCount < cats.length + 1) {
+        rec += "🚽 Tambah litter box!<br>";
+    }
+
+    if (rec !== "") {
+        document.getElementById("output").innerHTML += "<br>" + rec;
+    }
 }
 
-document.getElementById("btnClear").onclick = function(){
+// clear
+function clearAll() {
+    cats = [];
+    resources = [];
 
-    document.getElementById("numCats").value = "";
-    document.getElementById("catInputs").innerHTML = "";
-    document.getElementById("houseSize").value = "";
-    document.getElementById("litterBoxes").value = "";
-    document.getElementById("feedingStations").value = "";
-    document.getElementById("outputText").value = "";
+    let canvas = document.getElementById("mapCanvas");
+    let ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, 500, 500);
 
-    let ctx = document.getElementById("canvas").getContext("2d");
-    ctx.clearRect(0,0,500,350);
-};
+    document.getElementById("output").innerHTML = "";
+}
