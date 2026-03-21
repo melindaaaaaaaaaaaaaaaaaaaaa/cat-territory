@@ -79,7 +79,7 @@ function initializeCats(count) {
         });
     }
     
-    // Initialize relationships
+    // Initialize relationships (default roommates for all pairs)
     for (let i = 0; i < cats.length; i++) {
         for (let j = i + 1; j < cats.length; j++) {
             cats[i].relationships[j] = 'roommates';
@@ -150,7 +150,6 @@ function renderAllCatsForm() {
                     </div>
                     
                     <div class="relationships-section" id="relationships-${cat.id}" style="${cat.status === 'old' ? 'display: block;' : 'display: none;'}">
-                        <div class="relationships-title">🐾 Hubungan dengan kucing lain:</div>
                         ${renderRelationships(cat, index)}
                     </div>
                 </div>
@@ -165,46 +164,62 @@ function renderAllCatsForm() {
 }
 
 function renderRelationships(cat, catIndex) {
-    const otherCats = cats.filter((_, idx) => idx !== catIndex);
-    if (otherCats.length === 0) {
-        return '<p class="helper-text">Tidak ada kucing lain untuk dihubungkan</p>';
+    // Hanya tampilkan hubungan dengan kucing lain yang juga statusnya "old" (kucing lama)
+    const otherOldCats = cats.filter((otherCat, idx) => idx !== catIndex && otherCat.status === 'old');
+    
+    if (otherOldCats.length === 0) {
+        return `
+            <div class="relationships-title">🐾 Hubungan dengan kucing lain:</div>
+            <p class="helper-text">Belum ada kucing lama lain untuk dihubungkan. Hubungan akan otomatis terisi saat ada kucing lama lain.</p>
+        `;
     }
     
-    let html = '<div class="radio-group-vertical">';
-    otherCats.forEach(otherCat => {
+    let html = '<div class="relationships-title">🐾 Hubungan dengan kucing lama lain:</div>';
+    html += '<div class="radio-group-vertical">';
+    
+    otherOldCats.forEach(otherCat => {
         const currentRelation = cat.relationships[otherCat.id] || 'roommates';
         const relationLabels = {
-            'bestfriends': '💖 Best Friends (tidur bareng, grooming, main bareng)',
-            'roommates': '🏠 Roommates (damai tapi tidak dekat, time-sharing)',
-            'conflict': '⚠️ Tidak Cocok (hindari satu sama lain, bisa konflik)'
+            'bestfriends': '💖 Best Friends',
+            'roommates': '🏠 Roommates',
+            'conflict': '⚠️ Tidak Cocok'
+        };
+        
+        const relationDescriptions = {
+            'bestfriends': 'tidur bareng, grooming, main bareng',
+            'roommates': 'damai tapi tidak dekat, time-sharing',
+            'conflict': 'hindari satu sama lain, bisa konflik'
         };
         
         html += `
             <div class="radio-card" data-cat="${cat.id}" data-other="${otherCat.id}" data-value="${currentRelation}">
                 <input type="radio" name="rel_${cat.id}_${otherCat.id}" value="bestfriends" ${currentRelation === 'bestfriends' ? 'checked' : ''}>
                 <label>
-                    ${relationLabels.bestfriends}
-                    <div class="radio-desc">✨ Saling menyayangi, sering bersama</div>
+                    <strong>${otherCat.name || `Kucing ${otherCat.id + 1}`}</strong><br>
+                    <span style="font-size: 0.9rem;">${relationLabels.bestfriends}</span>
+                    <div class="radio-desc">✨ ${relationDescriptions.bestfriends}</div>
                 </label>
             </div>
             <div class="radio-card" data-cat="${cat.id}" data-other="${otherCat.id}" data-value="${currentRelation}">
                 <input type="radio" name="rel_${cat.id}_${otherCat.id}" value="roommates" ${currentRelation === 'roommates' ? 'checked' : ''}>
                 <label>
-                    ${relationLabels.roommates}
-                    <div class="radio-desc">🏡 Hidup berdampingan dengan damai</div>
+                    <strong>${otherCat.name || `Kucing ${otherCat.id + 1}`}</strong><br>
+                    <span style="font-size: 0.9rem;">${relationLabels.roommates}</span>
+                    <div class="radio-desc">🏡 ${relationDescriptions.roommates}</div>
                 </label>
             </div>
             <div class="radio-card" data-cat="${cat.id}" data-other="${otherCat.id}" data-value="${currentRelation}">
                 <input type="radio" name="rel_${cat.id}_${otherCat.id}" value="conflict" ${currentRelation === 'conflict' ? 'checked' : ''}>
                 <label>
-                    ${relationLabels.conflict}
-                    <div class="radio-desc">💢 Sering bertengkar, perlu perhatian</div>
+                    <strong>${otherCat.name || `Kucing ${otherCat.id + 1}`}</strong><br>
+                    <span style="font-size: 0.9rem;">${relationLabels.conflict}</span>
+                    <div class="radio-desc">💢 ${relationDescriptions.conflict}</div>
                 </label>
             </div>
         `;
     });
-    html += '</div>';
     
+    html += '</div>';
     return html;
 }
 
@@ -221,6 +236,7 @@ function addFormEventListeners() {
     document.querySelectorAll('.cat-status').forEach(select => {
         select.addEventListener('change', (e) => {
             const id = parseInt(e.target.dataset.id);
+            const oldStatus = cats[id].status;
             cats[id].status = e.target.value;
             
             // Show/hide traits and relationships sections
@@ -233,6 +249,24 @@ function addFormEventListeners() {
             } else {
                 traitsSection.style.display = 'none';
                 relationshipsSection.style.display = 'block';
+            }
+            
+            // Jika status berubah dari new ke old, update relationships section untuk semua kucing
+            if (oldStatus === 'new' && e.target.value === 'old') {
+                // Re-render semua form untuk update hubungan
+                renderAllCatsForm();
+            }
+            
+            // Jika status berubah dari old ke new, reset relationships untuk kucing ini
+            if (oldStatus === 'old' && e.target.value === 'new') {
+                // Reset relationships dengan kucing lain
+                for (let i = 0; i < cats.length; i++) {
+                    if (i !== id) {
+                        delete cats[id].relationships[i];
+                        delete cats[i].relationships[id];
+                    }
+                }
+                renderAllCatsForm();
             }
         });
     });
@@ -283,11 +317,14 @@ function addFormEventListeners() {
     // Add click effect for radio cards
     document.querySelectorAll('.radio-card').forEach(card => {
         card.addEventListener('click', (e) => {
+            // Prevent if clicking on radio itself (to avoid double trigger)
+            if (e.target.type === 'radio') return;
+            
             const radio = card.querySelector('input[type="radio"]');
-            if (radio) {
+            if (radio && !radio.checked) {
                 radio.checked = true;
                 // Trigger change event
-                const event = new Event('change');
+                const event = new Event('change', { bubbles: true });
                 radio.dispatchEvent(event);
             }
         });
@@ -298,14 +335,17 @@ function addFormEventListeners() {
             card.classList.add('selected');
         }
         
-        radio.addEventListener('change', (e) => {
-            document.querySelectorAll(`.radio-card[data-cat="${card.dataset.cat}"][data-other="${card.dataset.other}"]`).forEach(c => {
-                c.classList.remove('selected');
+        if (radio) {
+            radio.addEventListener('change', (e) => {
+                // Remove selected class from all cards with same cat and other
+                document.querySelectorAll(`.radio-card[data-cat="${card.dataset.cat}"][data-other="${card.dataset.other}"]`).forEach(c => {
+                    c.classList.remove('selected');
+                });
+                if (e.target.checked) {
+                    card.classList.add('selected');
+                }
             });
-            if (e.target.checked) {
-                card.classList.add('selected');
-            }
-        });
+        }
     });
 }
 
@@ -439,7 +479,7 @@ function calculateConflictLevel() {
     }
 }
 
-// ==================== CANVAS ANIMASI (sama seperti sebelumnya) ====================
+// ==================== CANVAS ANIMASI ====================
 function visualizeMovement() {
     canvas = document.getElementById('catCanvas');
     ctx = canvas.getContext('2d');
