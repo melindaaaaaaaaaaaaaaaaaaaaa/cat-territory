@@ -23,21 +23,19 @@
             </div>
         </div>
 
-        <!-- Step 2: Informasi Kucing (akan muncul bertahap) -->
+        <!-- Step 2: Informasi Semua Kucing (1 Halaman) -->
         <div id="step2" class="step">
             <div class="card">
                 <!-- Tombol Back -->
-                <button id="backToStep1" class="btn-back">← Kembali ke Jumlah Kucing</button>
+                <button id="backToStep1From2" class="btn-back">← Kembali ke Jumlah Kucing</button>
                 
-                <div class="progress-indicator">
-                    Kucing <span id="currentCatIndex">1</span> dari <span id="totalCats">0</span>
-                </div>
-                <h2 id="catTitle">Informasi Kucing #1</h2>
-                <div id="catForm"></div>
+                <h2>🐱 Informasi Semua Kucing</h2>
+                <p class="subtitle">Isi data masing-masing kucing di bawah ini</p>
+                
+                <div id="allCatsForm" class="all-cats-form"></div>
+                
                 <div class="button-group">
-                    <button id="prevCat" class="btn-secondary" style="display: none;">← Sebelumnya</button>
-                    <button id="nextCat" class="btn-primary" style="display: none;">Selanjutnya →</button>
-                    <button id="finishCats" class="btn-primary" style="display: none;">Selesai →</button>
+                    <button id="saveAndContinue" class="btn-primary">Simpan & Lanjutkan →</button>
                 </div>
             </div>
         </div>
@@ -86,7 +84,7 @@
                 <!-- Canvas Visualisasi -->
                 <div class="card visualization-card">
                     <h2>🐾 Pergerakan Kucing Selama 24 Jam</h2>
-                    <p class="subtitle">Animasi pergerakan kucing di dalam rumah (1 detik = 1 jam)</p>
+                    <p class="subtitle">Animasi pergerakan kucing di dalam rumah</p>
                     <canvas id="catCanvas" width="800" height="500"></canvas>
                     <div class="legend" id="legend"></div>
                     <div class="controls">
