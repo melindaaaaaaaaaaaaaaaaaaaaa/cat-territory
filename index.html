@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teritori Kucing - Cat Territory Planner</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Step 1: Jumlah Kucing -->
+        <div id="step1" class="step active">
+            <div class="card">
+                <div class="cat-icon">🐱</div>
+                <h1>Berapa banyak kucing yang kamu punya?</h1>
+                <p class="subtitle">Masukkan jumlah kucingmu untuk memulai perencanaan teritori</p>
+                <div class="input-group">
+                    <input type="number" id="catCount" min="1" max="10" placeholder="Masukkan angka">
+                    <button id="nextStep1" class="btn-primary">Lanjutkan →</button>
+                </div>
+                <div id="errorMessage" class="error-message"></div>
+            </div>
+        </div>
+
+        <!-- Step 2: Informasi Kucing -->
+        <div id="step2" class="step">
+            <div class="card">
+                <div class="progress-indicator">
+                    <span id="currentCatIndex">1</span> / <span id="totalCats">0</span>
+                </div>
+                <h2 id="catTitle">Informasi Kucing #1</h2>
+                <div id="catForm"></div>
+                <div class="button-group">
+                    <button id="prevCat" class="btn-secondary" style="display: none;">← Sebelumnya</button>
+                    <button id="nextCat" class="btn-primary">Selanjutnya →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Input Luas Rumah -->
+        <div id="step3" class="step">
+            <div class="card">
+                <h2>🏠 Berapa luas rumahmu?</h2>
+                <p class="subtitle">Masukkan luas rumah dalam meter persegi (bentuk persegi)</p>
+                <div class="input-group">
+                    <input type="number" id="houseArea" placeholder="Contoh: 100" step="1">
+                    <span class="unit">m²</span>
+                </div>
+                <button id="calculateBtn" class="btn-primary">Lihat Hasil →</button>
+            </div>
+        </div>
+
+        <!-- Step 4: Hasil Rekomendasi & Visualisasi -->
+        <div id="step4" class="step">
+            <div class="results-container">
+                <!-- Rekomendasi -->
+                <div class="card recommendation-card">
+                    <h2>📋 Rekomendasi Peralatan</h2>
+                    <div id="recommendations"></div>
+                </div>
+
+                <!-- Progress Bar Conflict -->
+                <div class="card conflict-card">
+                    <h2>⚡ Tingkat Konflik Antar Kucing</h2>
+                    <div class="conflict-bar-container">
+                        <div class="conflict-bar" id="conflictBar"></div>
+                    </div>
+                    <div class="conflict-percentage" id="conflictPercentage">0%</div>
+                    <p id="conflictStatus" class="conflict-status"></p>
+                </div>
+
+                <!-- Canvas Visualisasi -->
+                <div class="card visualization-card">
+                    <h2>🐾 Pergerakan Kucing Selama 24 Jam</h2>
+                    <p class="subtitle">Animasi pergerakan kucing di dalam rumah (1 detik = 1 jam)</p>
+                    <canvas id="catCanvas" width="800" height="500"></canvas>
+                    <div class="legend" id="legend"></div>
+                    <div class="controls">
+                        <button id="startAnimation" class="btn-primary">▶ Mulai Animasi</button>
+                        <button id="resetAnimation" class="btn-secondary">🔄 Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
