@@ -1,40 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Computation application mockup</title>
+    <title>Cat Space Analyzer 🐱</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>Computation application mockup</h1>
-<p><b>Multi-Cat Household Territory Simulation</b></p>
+<h1>🐱 Cat Space Analyzer</h1>
 
 <div class="container">
-
-    <h3>Number of Cats</h3>
-    <input type="number" id="numCats" placeholder="Enter number of cats">
-    <button id="generateInputs">Generate Cat Inputs</button>
-
-    <div id="catInputs"></div>
-
-    <h3>Environment</h3>
-    <input type="number" id="houseSize" placeholder="House Size (m²)">
-    <input type="number" id="litterBoxes" placeholder="Number of Litter Boxes">
-    <input type="number" id="feedingStations" placeholder="Number of Feeding Stations">
-
-    <h3>Controls</h3>
-    <button id="btnRun">Run Simulation</button>
-    <button id="btnClear">Clear All</button>
-
-    <h3>Outputs</h3>
-    <textarea id="outputText" rows="6"></textarea>
-
-    <canvas id="canvas" width="500" height="350"></canvas>
-
+    <h2>Tambah Kucing</h2>
+    <input type="text" id="catName" placeholder="Nama kucing">
+    <button onclick="addCat()">Tambah</button>
 </div>
 
-<script src="script.js" defer></script>
+<div class="container">
+    <h2>Tambah Resource</h2>
+    <button onclick="addResource('food')">🍽️ Food</button>
+    <button onclick="addResource('litter')">🚽 Litter</button>
+</div>
 
+<canvas id="mapCanvas" width="500" height="500"></canvas>
+
+<div class="container">
+    <button onclick="runSimulation()">▶️ Run Simulation</button>
+    <button onclick="clearAll()">🧹 Clear</button>
+</div>
+
+<div id="output"></div>
+
+<script src="script.js"></script>
 </body>
 </html>
