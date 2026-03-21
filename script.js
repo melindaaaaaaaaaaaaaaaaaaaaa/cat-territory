@@ -1,9 +1,8 @@
 // Data Storage
 let cats = [];
-let currentCatIndex = 0;
 let animationFrameId = null;
 let ctx, canvas, width, height;
-let fightEffects = []; // Array untuk menyimpan efek perkelahian
+let fightEffects = [];
 
 // DOM Elements
 const step1 = document.getElementById('step1');
@@ -12,24 +11,21 @@ const step3 = document.getElementById('step3');
 const step4 = document.getElementById('step4');
 
 // ==================== FUNGSI BACK ====================
-// Back from Step 2 to Step 1
-document.getElementById('backToStep1').addEventListener('click', () => {
+document.getElementById('backToStep1From2').addEventListener('click', () => {
     if (confirm('Kembali ke halaman awal? Data kucing yang sudah diisi akan tersimpan.')) {
-        saveCurrentCatData();
+        saveAllCatsData();
         step2.classList.remove('active');
         step1.classList.add('active');
         document.getElementById('catCount').value = cats.length;
     }
 });
 
-// Back from Step 3 to Step 2
 document.getElementById('backToStep2').addEventListener('click', () => {
     step3.classList.remove('active');
     step2.classList.add('active');
-    updateCatForm();
+    renderAllCatsForm();
 });
 
-// Back from Step 4 to Step 3
 document.getElementById('backToStep3').addEventListener('click', () => {
     if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
@@ -78,196 +74,264 @@ function initializeCats(count) {
             color: `hsl(${Math.random() * 360}, 70%, 65%)`,
             position: { x: 0, y: 0 },
             direction: { x: 0, y: 0 },
-            fighting: false, // status sedang berantem
-            fightTimer: 0 // timer untuk animasi berantem
+            fighting: false,
+            fightTimer: 0
         });
     }
     
+    // Initialize relationships
     for (let i = 0; i < cats.length; i++) {
         for (let j = i + 1; j < cats.length; j++) {
             cats[i].relationships[j] = 'roommates';
             cats[j].relationships[i] = 'roommates';
         }
     }
-    
-    document.getElementById('totalCats').textContent = count;
-    currentCatIndex = 0;
 }
 
 function showStep2() {
     step1.classList.remove('active');
     step2.classList.add('active');
-    updateCatForm();
+    renderAllCatsForm();
 }
 
-// ==================== STEP 2: INFORMASI KUCING ====================
-function updateCatForm() {
-    const cat = cats[currentCatIndex];
-    const totalCats = cats.length;
+// ==================== STEP 2: RENDER SEMUA KUCING DALAM 1 HALAMAN ====================
+function renderAllCatsForm() {
+    const container = document.getElementById('allCatsForm');
+    let html = '';
     
-    document.getElementById('catTitle').textContent = `Informasi Kucing #${currentCatIndex + 1}`;
-    document.getElementById('currentCatIndex').textContent = currentCatIndex + 1;
-    
-    let html = `
-        <div class="cat-info-form">
-            <div class="form-group">
-                <label>🐱 Nama Kucing</label>
-                <input type="text" id="catName" value="${cat.name}" placeholder="Masukkan nama kucing" required>
-            </div>
-            <div class="form-group">
-                <label>📋 Status Kucing</label>
-                <select id="catStatus">
-                    <option value="new" ${cat.status === 'new' ? 'selected' : ''}>🐣 Kucing Baru (belum pernah tinggal bersama)</option>
-                    <option value="old" ${cat.status === 'old' ? 'selected' : ''}>😺 Kucing Lama (sudah tinggal bersama)</option>
-                </select>
-            </div>
-    `;
-    
-    if (cat.status === 'new') {
+    cats.forEach((cat, index) => {
+        const catNumber = index + 1;
+        
         html += `
-            <div class="form-group">
-                <label>🦁 Tingkat Dominance (0-100)</label>
-                <div class="slider-container">
-                    <input type="range" id="dominance" min="0" max="100" value="${cat.traits.dominance}">
-                    <span class="slider-value" id="dominanceValue">${cat.traits.dominance}</span>
+            <div class="cat-form-card" data-cat-id="${cat.id}">
+                <div class="cat-form-header">
+                    <div class="cat-number">${catNumber}</div>
+                    <h3>${cat.name || `Kucing ${catNumber}`}</h3>
                 </div>
-                <small>Semakin tinggi, semakin dominan</small>
-            </div>
-            <div class="form-group">
-                <label>😰 Tingkat Stress (0-100)</label>
-                <div class="slider-container">
-                    <input type="range" id="stress" min="0" max="100" value="${cat.traits.stress}">
-                    <span class="slider-value" id="stressValue">${cat.traits.stress}</span>
-                </div>
-                <small>Semakin tinggi, semakin mudah stres</small>
-            </div>
-            <div class="form-group">
-                <label>🤝 Tingkat Tolerance (0-100)</label>
-                <div class="slider-container">
-                    <input type="range" id="tolerance" min="0" max="100" value="${cat.traits.tolerance}">
-                    <span class="slider-value" id="toleranceValue">${cat.traits.tolerance}</span>
-                </div>
-                <small>Semakin tinggi, semakin toleran</small>
-            </div>
-        `;
-    } else {
-        const otherCats = cats.filter((_, idx) => idx !== currentCatIndex);
-        if (otherCats.length > 0) {
-            html += `<div class="relationship-group"><h4>🐾 Hubungan dengan kucing lain:</h4>`;
-            otherCats.forEach(otherCat => {
-                const currentRelation = cat.relationships[otherCat.id] || 'roommates';
-                
-                html += `
+                <div class="cat-form-body">
                     <div class="form-group">
-                        <label>Hubungan dengan ${otherCat.name || `Kucing ${otherCat.id + 1}`}</label>
-                        <div class="radio-group">
-                            <label class="radio-option">
-                                <input type="radio" name="rel_${otherCat.id}" value="bestfriends" ${currentRelation === 'bestfriends' ? 'checked' : ''}>
-                                💖 Best Friends (tidur bareng, grooming, main bareng)
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="rel_${otherCat.id}" value="roommates" ${currentRelation === 'roommates' ? 'checked' : ''}>
-                                🏠 Roommates (damai tapi tidak dekat, time-sharing)
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="rel_${otherCat.id}" value="conflict" ${currentRelation === 'conflict' ? 'checked' : ''}>
-                                ⚠️ Tidak Cocok (hindari satu sama lain, bisa konflik)
-                            </label>
+                        <label>🐱 Nama Kucing</label>
+                        <input type="text" class="cat-name" value="${escapeHtml(cat.name)}" placeholder="Masukkan nama kucing" data-id="${cat.id}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>📋 Status Kucing</label>
+                        <select class="cat-status" data-id="${cat.id}">
+                            <option value="new" ${cat.status === 'new' ? 'selected' : ''}>🐣 Kucing Baru (belum pernah tinggal bersama)</option>
+                            <option value="old" ${cat.status === 'old' ? 'selected' : ''}>😺 Kucing Lama (sudah tinggal bersama)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="traits-section" id="traits-${cat.id}" style="${cat.status === 'new' ? 'display: block;' : 'display: none;'}">
+                        <div class="form-group">
+                            <label>🦁 Tingkat Dominance (0-100)</label>
+                            <div class="slider-wrapper">
+                                <input type="range" class="dominance-slider" min="0" max="100" value="${cat.traits.dominance}" data-id="${cat.id}">
+                                <span class="trait-value" id="dominance-val-${cat.id}">${cat.traits.dominance}</span>
+                            </div>
+                            <div class="helper-text">Semakin tinggi, semakin dominan</div>
+                        </div>
+                        <div class="form-group">
+                            <label>😰 Tingkat Stress (0-100)</label>
+                            <div class="slider-wrapper">
+                                <input type="range" class="stress-slider" min="0" max="100" value="${cat.traits.stress}" data-id="${cat.id}">
+                                <span class="trait-value" id="stress-val-${cat.id}">${cat.traits.stress}</span>
+                            </div>
+                            <div class="helper-text">Semakin tinggi, semakin mudah stres</div>
+                        </div>
+                        <div class="form-group">
+                            <label>🤝 Tingkat Tolerance (0-100)</label>
+                            <div class="slider-wrapper">
+                                <input type="range" class="tolerance-slider" min="0" max="100" value="${cat.traits.tolerance}" data-id="${cat.id}">
+                                <span class="trait-value" id="tolerance-val-${cat.id}">${cat.traits.tolerance}</span>
+                            </div>
+                            <div class="helper-text">Semakin tinggi, semakin toleran</div>
                         </div>
                     </div>
-                `;
-            });
-            html += `</div>`;
-        } else {
-            html += `<p class="subtitle">Tidak ada kucing lain untuk dihubungkan</p>`;
-        }
-    }
+                    
+                    <div class="relationships-section" id="relationships-${cat.id}" style="${cat.status === 'old' ? 'display: block;' : 'display: none;'}">
+                        <div class="relationships-title">🐾 Hubungan dengan kucing lain:</div>
+                        ${renderRelationships(cat, index)}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
     
-    html += `</div>`;
-    document.getElementById('catForm').innerHTML = html;
+    container.innerHTML = html;
     
-    if (cat.status === 'new') {
-        const dominanceSlider = document.getElementById('dominance');
-        const stressSlider = document.getElementById('stress');
-        const toleranceSlider = document.getElementById('tolerance');
-        
-        if (dominanceSlider) {
-            dominanceSlider.addEventListener('input', (e) => {
-                document.getElementById('dominanceValue').textContent = e.target.value;
-            });
-        }
-        if (stressSlider) {
-            stressSlider.addEventListener('input', (e) => {
-                document.getElementById('stressValue').textContent = e.target.value;
-            });
-        }
-        if (toleranceSlider) {
-            toleranceSlider.addEventListener('input', (e) => {
-                document.getElementById('toleranceValue').textContent = e.target.value;
-            });
-        }
-    }
-    
-    const prevBtn = document.getElementById('prevCat');
-    const nextBtn = document.getElementById('nextCat');
-    const finishBtn = document.getElementById('finishCats');
-    
-    prevBtn.style.display = currentCatIndex === 0 ? 'none' : 'inline-block';
-    
-    if (currentCatIndex === totalCats - 1) {
-        nextBtn.style.display = 'none';
-        finishBtn.style.display = 'inline-block';
-    } else {
-        nextBtn.style.display = 'inline-block';
-        finishBtn.style.display = 'none';
-    }
+    // Add event listeners for all inputs
+    addFormEventListeners();
 }
 
-function saveCurrentCatData() {
-    const cat = cats[currentCatIndex];
-    const nameInput = document.getElementById('catName');
-    if (nameInput && nameInput.value.trim() !== '') {
-        cat.name = nameInput.value.trim();
-    } else if (nameInput) {
-        cat.name = `Kucing ${currentCatIndex + 1}`;
+function renderRelationships(cat, catIndex) {
+    const otherCats = cats.filter((_, idx) => idx !== catIndex);
+    if (otherCats.length === 0) {
+        return '<p class="helper-text">Tidak ada kucing lain untuk dihubungkan</p>';
     }
     
-    const statusSelect = document.getElementById('catStatus');
-    if (statusSelect) cat.status = statusSelect.value;
+    let html = '<div class="radio-group-vertical">';
+    otherCats.forEach(otherCat => {
+        const currentRelation = cat.relationships[otherCat.id] || 'roommates';
+        const relationLabels = {
+            'bestfriends': '💖 Best Friends (tidur bareng, grooming, main bareng)',
+            'roommates': '🏠 Roommates (damai tapi tidak dekat, time-sharing)',
+            'conflict': '⚠️ Tidak Cocok (hindari satu sama lain, bisa konflik)'
+        };
+        
+        html += `
+            <div class="radio-card" data-cat="${cat.id}" data-other="${otherCat.id}" data-value="${currentRelation}">
+                <input type="radio" name="rel_${cat.id}_${otherCat.id}" value="bestfriends" ${currentRelation === 'bestfriends' ? 'checked' : ''}>
+                <label>
+                    ${relationLabels.bestfriends}
+                    <div class="radio-desc">✨ Saling menyayangi, sering bersama</div>
+                </label>
+            </div>
+            <div class="radio-card" data-cat="${cat.id}" data-other="${otherCat.id}" data-value="${currentRelation}">
+                <input type="radio" name="rel_${cat.id}_${otherCat.id}" value="roommates" ${currentRelation === 'roommates' ? 'checked' : ''}>
+                <label>
+                    ${relationLabels.roommates}
+                    <div class="radio-desc">🏡 Hidup berdampingan dengan damai</div>
+                </label>
+            </div>
+            <div class="radio-card" data-cat="${cat.id}" data-other="${otherCat.id}" data-value="${currentRelation}">
+                <input type="radio" name="rel_${cat.id}_${otherCat.id}" value="conflict" ${currentRelation === 'conflict' ? 'checked' : ''}>
+                <label>
+                    ${relationLabels.conflict}
+                    <div class="radio-desc">💢 Sering bertengkar, perlu perhatian</div>
+                </label>
+            </div>
+        `;
+    });
+    html += '</div>';
     
-    if (cat.status === 'new') {
-        const dominance = document.getElementById('dominance');
-        const stress = document.getElementById('stress');
-        const tolerance = document.getElementById('tolerance');
-        if (dominance) cat.traits.dominance = parseInt(dominance.value);
-        if (stress) cat.traits.stress = parseInt(stress.value);
-        if (tolerance) cat.traits.tolerance = parseInt(tolerance.value);
-    } else {
-        const otherCats = cats.filter((_, idx) => idx !== currentCatIndex);
-        otherCats.forEach(otherCat => {
-            const radioSelected = document.querySelector(`input[name="rel_${otherCat.id}"]:checked`);
-            if (radioSelected) {
-                cat.relationships[otherCat.id] = radioSelected.value;
-                cats[otherCat.id].relationships[currentCatIndex] = radioSelected.value;
+    return html;
+}
+
+function addFormEventListeners() {
+    // Name inputs
+    document.querySelectorAll('.cat-name').forEach(input => {
+        input.addEventListener('change', (e) => {
+            const id = parseInt(e.target.dataset.id);
+            cats[id].name = e.target.value;
+        });
+    });
+    
+    // Status selects
+    document.querySelectorAll('.cat-status').forEach(select => {
+        select.addEventListener('change', (e) => {
+            const id = parseInt(e.target.dataset.id);
+            cats[id].status = e.target.value;
+            
+            // Show/hide traits and relationships sections
+            const traitsSection = document.getElementById(`traits-${id}`);
+            const relationshipsSection = document.getElementById(`relationships-${id}`);
+            
+            if (e.target.value === 'new') {
+                traitsSection.style.display = 'block';
+                relationshipsSection.style.display = 'none';
+            } else {
+                traitsSection.style.display = 'none';
+                relationshipsSection.style.display = 'block';
             }
         });
-    }
+    });
+    
+    // Dominance sliders
+    document.querySelectorAll('.dominance-slider').forEach(slider => {
+        slider.addEventListener('input', (e) => {
+            const id = parseInt(e.target.dataset.id);
+            const value = parseInt(e.target.value);
+            cats[id].traits.dominance = value;
+            document.getElementById(`dominance-val-${id}`).textContent = value;
+        });
+    });
+    
+    // Stress sliders
+    document.querySelectorAll('.stress-slider').forEach(slider => {
+        slider.addEventListener('input', (e) => {
+            const id = parseInt(e.target.dataset.id);
+            const value = parseInt(e.target.value);
+            cats[id].traits.stress = value;
+            document.getElementById(`stress-val-${id}`).textContent = value;
+        });
+    });
+    
+    // Tolerance sliders
+    document.querySelectorAll('.tolerance-slider').forEach(slider => {
+        slider.addEventListener('input', (e) => {
+            const id = parseInt(e.target.dataset.id);
+            const value = parseInt(e.target.value);
+            cats[id].traits.tolerance = value;
+            document.getElementById(`tolerance-val-${id}`).textContent = value;
+        });
+    });
+    
+    // Relationship radio buttons
+    document.querySelectorAll('input[type="radio"][name^="rel_"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            const nameParts = e.target.name.split('_');
+            const catId = parseInt(nameParts[1]);
+            const otherId = parseInt(nameParts[2]);
+            const value = e.target.value;
+            
+            cats[catId].relationships[otherId] = value;
+            cats[otherId].relationships[catId] = value;
+        });
+    });
+    
+    // Add click effect for radio cards
+    document.querySelectorAll('.radio-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            const radio = card.querySelector('input[type="radio"]');
+            if (radio) {
+                radio.checked = true;
+                // Trigger change event
+                const event = new Event('change');
+                radio.dispatchEvent(event);
+            }
+        });
+        
+        // Highlight if selected
+        const radio = card.querySelector('input[type="radio"]');
+        if (radio && radio.checked) {
+            card.classList.add('selected');
+        }
+        
+        radio.addEventListener('change', (e) => {
+            document.querySelectorAll(`.radio-card[data-cat="${card.dataset.cat}"][data-other="${card.dataset.other}"]`).forEach(c => {
+                c.classList.remove('selected');
+            });
+            if (e.target.checked) {
+                card.classList.add('selected');
+            }
+        });
+    });
 }
 
-document.getElementById('prevCat').addEventListener('click', () => {
-    saveCurrentCatData();
-    currentCatIndex--;
-    updateCatForm();
-});
+function saveAllCatsData() {
+    // Data already saved through event listeners
+    // Just make sure all cats have names
+    cats.forEach((cat, index) => {
+        if (!cat.name || cat.name.trim() === '') {
+            cat.name = `Kucing ${index + 1}`;
+        }
+    });
+}
 
-document.getElementById('nextCat').addEventListener('click', () => {
-    saveCurrentCatData();
-    currentCatIndex++;
-    updateCatForm();
-});
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
+}
 
-document.getElementById('finishCats').addEventListener('click', () => {
-    saveCurrentCatData();
+// Save & Continue button
+document.getElementById('saveAndContinue').addEventListener('click', () => {
+    saveAllCatsData();
     showStep3();
 });
 
@@ -375,7 +439,7 @@ function calculateConflictLevel() {
     }
 }
 
-// ==================== CANVAS ANIMASI DENGAN DETEKSI BERANTEM ====================
+// ==================== CANVAS ANIMASI (sama seperti sebelumnya) ====================
 function visualizeMovement() {
     canvas = document.getElementById('catCanvas');
     ctx = canvas.getContext('2d');
@@ -466,7 +530,6 @@ function drawCanvas() {
                     ctx.lineWidth = 4;
                     ctx.stroke();
                     
-                    // Draw dashed line for conflict
                     ctx.beginPath();
                     ctx.moveTo(cats[i].position.x, cats[i].position.y);
                     ctx.lineTo(cats[j].position.x, cats[j].position.y);
@@ -497,7 +560,6 @@ function drawCanvas() {
     
     // Draw cats
     cats.forEach((cat, index) => {
-        // Shadow effect when fighting
         if (cat.fighting) {
             ctx.shadowColor = 'rgba(255, 107, 107, 0.8)';
             ctx.shadowBlur = 15;
@@ -505,7 +567,6 @@ function drawCanvas() {
             ctx.shadowBlur = 0;
         }
         
-        // Draw cat circle
         ctx.beginPath();
         ctx.arc(cat.position.x, cat.position.y, 22, 0, Math.PI * 2);
         ctx.fillStyle = cat.color;
@@ -516,7 +577,6 @@ function drawCanvas() {
         
         ctx.shadowBlur = 0;
         
-        // Draw angry eyebrows when fighting
         if (cat.fighting) {
             ctx.beginPath();
             ctx.moveTo(cat.position.x - 12, cat.position.y - 12);
@@ -532,7 +592,6 @@ function drawCanvas() {
             ctx.fill();
         }
         
-        // Draw cat face
         ctx.fillStyle = '#5a3e4b';
         ctx.beginPath();
         ctx.arc(cat.position.x - 7, cat.position.y - 5, 2.5, 0, Math.PI * 2);
@@ -541,7 +600,6 @@ function drawCanvas() {
         ctx.arc(cat.position.x + 7, cat.position.y - 5, 2.5, 0, Math.PI * 2);
         ctx.fill();
         
-        // Draw angry eyes when fighting
         if (cat.fighting) {
             ctx.fillStyle = '#ff6b6b';
             ctx.beginPath();
@@ -552,13 +610,11 @@ function drawCanvas() {
             ctx.fill();
         }
         
-        // Draw nose
         ctx.fillStyle = '#ff9999';
         ctx.beginPath();
         ctx.arc(cat.position.x, cat.position.y + 2, 2, 0, Math.PI * 2);
         ctx.fill();
         
-        // Draw ears
         ctx.fillStyle = cat.color;
         ctx.beginPath();
         ctx.moveTo(cat.position.x - 15, cat.position.y - 20);
@@ -571,12 +627,10 @@ function drawCanvas() {
         ctx.lineTo(cat.position.x + 25, cat.position.y - 5);
         ctx.fill();
         
-        // Draw name
         ctx.fillStyle = '#5a3e4b';
         ctx.font = 'bold 12px Quicksand';
         ctx.fillText(cat.name || `Kucing ${cat.id + 1}`, cat.position.x - 20, cat.position.y - 28);
         
-        // Draw EXCLAMATION MARK when fighting (bigger and more dramatic)
         if (cat.fighting) {
             ctx.fillStyle = '#ff6b6b';
             ctx.font = 'bold 32px Arial';
@@ -591,7 +645,6 @@ function drawCanvas() {
 }
 
 function updatePositions() {
-    // Reset fighting status
     cats.forEach(cat => {
         if (cat.fightTimer > 0) {
             cat.fightTimer--;
@@ -601,29 +654,24 @@ function updatePositions() {
         }
     });
     
-    // Check for conflicts between cats
     for (let i = 0; i < cats.length; i++) {
         for (let j = i + 1; j < cats.length; j++) {
             const distance = Math.hypot(cats[i].position.x - cats[j].position.x, 
                                        cats[i].position.y - cats[j].position.y);
             const relation = cats[i].relationships[j] || 'roommates';
             
-            // If they are in conflict and get close -> FIGHT!
             if (relation === 'conflict' && distance < 55) {
-                // Set fighting status
                 cats[i].fighting = true;
                 cats[j].fighting = true;
                 cats[i].fightTimer = 40;
                 cats[j].fightTimer = 40;
                 
-                // Add fight effect
                 fightEffects.push({
                     x: (cats[i].position.x + cats[j].position.x) / 2,
                     y: (cats[i].position.y + cats[j].position.y) / 2,
                     timer: 30
                 });
                 
-                // Push them apart (they run away after fighting)
                 const angle = Math.atan2(cats[j].position.y - cats[i].position.y, 
                                          cats[j].position.x - cats[i].position.x);
                 const force = 3;
@@ -632,13 +680,11 @@ function updatePositions() {
                 cats[j].position.x += Math.cos(angle) * force;
                 cats[j].position.y += Math.sin(angle) * force;
                 
-                // Change direction
                 cats[i].direction.x += (Math.random() - 0.5) * 1;
                 cats[i].direction.y += (Math.random() - 0.5) * 1;
                 cats[j].direction.x += (Math.random() - 0.5) * 1;
                 cats[j].direction.y += (Math.random() - 0.5) * 1;
                 
-                // Normalize directions
                 let len = Math.hypot(cats[i].direction.x, cats[i].direction.y);
                 if (len > 0) {
                     cats[i].direction.x /= len;
@@ -653,14 +699,12 @@ function updatePositions() {
         }
     }
     
-    // Update positions
     cats.forEach(cat => {
         let speed = 1.5;
         if (cat.status === 'new') {
             speed = 1.5 + (cat.traits.stress / 100);
         }
         
-        // If fighting, move faster (running away)
         if (cat.fighting) {
             speed = 2.5;
         }
@@ -668,7 +712,6 @@ function updatePositions() {
         cat.position.x += cat.direction.x * speed;
         cat.position.y += cat.direction.y * speed;
         
-        // Bounce off walls
         if (cat.position.x < 25 || cat.position.x > width - 25) {
             cat.direction.x *= -1;
             cat.position.x = Math.min(Math.max(cat.position.x, 25), width - 25);
@@ -678,7 +721,6 @@ function updatePositions() {
             cat.position.y = Math.min(Math.max(cat.position.y, 25), height - 25);
         }
         
-        // Random direction change
         if (Math.random() < 0.02 && !cat.fighting) {
             cat.direction.x += (Math.random() - 0.5) * 0.8;
             cat.direction.y += (Math.random() - 0.5) * 0.8;
