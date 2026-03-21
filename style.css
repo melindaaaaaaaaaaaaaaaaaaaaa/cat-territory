@@ -104,6 +104,19 @@ input[type="number"]:focus {
     box-shadow: 0 0 0 3px rgba(230, 138, 158, 0.1);
 }
 
+input[type="text"] {
+    padding: 12px 15px;
+    border: 2px solid #ffccdd;
+    border-radius: 15px;
+    font-family: 'Quicksand', sans-serif;
+    transition: all 0.3s ease;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: #e68a9e;
+}
+
 .unit {
     font-size: 1.2rem;
     color: #e68a9e;
@@ -218,6 +231,37 @@ input[type="number"]:focus {
 .radio-option input[type="radio"] {
     width: auto;
     margin: 0;
+}
+
+/* Slider */
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+input[type="range"] {
+    flex: 1;
+    height: 5px;
+    border-radius: 5px;
+    background: #ffccdd;
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #e68a9e;
+    cursor: pointer;
+}
+
+.slider-value {
+    min-width: 40px;
+    text-align: center;
+    font-weight: 600;
+    color: #e68a9e;
 }
 
 /* Error Message */
@@ -354,5 +398,10 @@ input[type="number"]:focus {
     
     .radio-group {
         flex-direction: column;
+    }
+    
+    .slider-container {
+        flex-direction: column;
+        align-items: stretch;
     }
 }
