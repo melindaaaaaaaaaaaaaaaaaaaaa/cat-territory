@@ -3,6 +3,8 @@ let cats = [];
 let animationFrameId = null;
 let ctx, canvas, width, height;
 let fightEffects = [];
+let houseArea = 0; // Menyimpan luas rumah yang diinput user
+let houseScale = 1; // Skala untuk konversi luas rumah ke pixel canvas
 
 // DOM Elements
 const step1 = document.getElementById('step1');
@@ -79,7 +81,7 @@ function initializeCats(count) {
         });
     }
     
-    // Initialize relationships (default roommates for all pairs)
+    // Initialize relationships
     for (let i = 0; i < cats.length; i++) {
         for (let j = i + 1; j < cats.length; j++) {
             cats[i].relationships[j] = 'roommates';
@@ -158,13 +160,10 @@ function renderAllCatsForm() {
     });
     
     container.innerHTML = html;
-    
-    // Add event listeners for all inputs
     addFormEventListeners();
 }
 
 function renderRelationships(cat, catIndex) {
-    // Hanya tampilkan hubungan dengan kucing lain yang juga statusnya "old" (kucing lama)
     const otherOldCats = cats.filter((otherCat, idx) => idx !== catIndex && otherCat.status === 'old');
     
     if (otherOldCats.length === 0) {
@@ -224,7 +223,6 @@ function renderRelationships(cat, catIndex) {
 }
 
 function addFormEventListeners() {
-    // Name inputs
     document.querySelectorAll('.cat-name').forEach(input => {
         input.addEventListener('change', (e) => {
             const id = parseInt(e.target.dataset.id);
@@ -232,14 +230,12 @@ function addFormEventListeners() {
         });
     });
     
-    // Status selects
     document.querySelectorAll('.cat-status').forEach(select => {
         select.addEventListener('change', (e) => {
             const id = parseInt(e.target.dataset.id);
             const oldStatus = cats[id].status;
             cats[id].status = e.target.value;
             
-            // Show/hide traits and relationships sections
             const traitsSection = document.getElementById(`traits-${id}`);
             const relationshipsSection = document.getElementById(`relationships-${id}`);
             
@@ -251,15 +247,11 @@ function addFormEventListeners() {
                 relationshipsSection.style.display = 'block';
             }
             
-            // Jika status berubah dari new ke old, update relationships section untuk semua kucing
             if (oldStatus === 'new' && e.target.value === 'old') {
-                // Re-render semua form untuk update hubungan
                 renderAllCatsForm();
             }
             
-            // Jika status berubah dari old ke new, reset relationships untuk kucing ini
             if (oldStatus === 'old' && e.target.value === 'new') {
-                // Reset relationships dengan kucing lain
                 for (let i = 0; i < cats.length; i++) {
                     if (i !== id) {
                         delete cats[id].relationships[i];
@@ -271,7 +263,6 @@ function addFormEventListeners() {
         });
     });
     
-    // Dominance sliders
     document.querySelectorAll('.dominance-slider').forEach(slider => {
         slider.addEventListener('input', (e) => {
             const id = parseInt(e.target.dataset.id);
@@ -281,7 +272,6 @@ function addFormEventListeners() {
         });
     });
     
-    // Stress sliders
     document.querySelectorAll('.stress-slider').forEach(slider => {
         slider.addEventListener('input', (e) => {
             const id = parseInt(e.target.dataset.id);
@@ -291,7 +281,6 @@ function addFormEventListeners() {
         });
     });
     
-    // Tolerance sliders
     document.querySelectorAll('.tolerance-slider').forEach(slider => {
         slider.addEventListener('input', (e) => {
             const id = parseInt(e.target.dataset.id);
@@ -301,7 +290,6 @@ function addFormEventListeners() {
         });
     });
     
-    // Relationship radio buttons
     document.querySelectorAll('input[type="radio"][name^="rel_"]').forEach(radio => {
         radio.addEventListener('change', (e) => {
             const nameParts = e.target.name.split('_');
@@ -314,22 +302,17 @@ function addFormEventListeners() {
         });
     });
     
-    // Add click effect for radio cards
     document.querySelectorAll('.radio-card').forEach(card => {
         card.addEventListener('click', (e) => {
-            // Prevent if clicking on radio itself (to avoid double trigger)
             if (e.target.type === 'radio') return;
-            
             const radio = card.querySelector('input[type="radio"]');
             if (radio && !radio.checked) {
                 radio.checked = true;
-                // Trigger change event
                 const event = new Event('change', { bubbles: true });
                 radio.dispatchEvent(event);
             }
         });
         
-        // Highlight if selected
         const radio = card.querySelector('input[type="radio"]');
         if (radio && radio.checked) {
             card.classList.add('selected');
@@ -337,7 +320,6 @@ function addFormEventListeners() {
         
         if (radio) {
             radio.addEventListener('change', (e) => {
-                // Remove selected class from all cards with same cat and other
                 document.querySelectorAll(`.radio-card[data-cat="${card.dataset.cat}"][data-other="${card.dataset.other}"]`).forEach(c => {
                     c.classList.remove('selected');
                 });
@@ -350,8 +332,6 @@ function addFormEventListeners() {
 }
 
 function saveAllCatsData() {
-    // Data already saved through event listeners
-    // Just make sure all cats have names
     cats.forEach((cat, index) => {
         if (!cat.name || cat.name.trim() === '') {
             cat.name = `Kucing ${index + 1}`;
@@ -369,7 +349,6 @@ function escapeHtml(str) {
     });
 }
 
-// Save & Continue button
 document.getElementById('saveAndContinue').addEventListener('click', () => {
     saveAllCatsData();
     showStep3();
@@ -399,6 +378,7 @@ calculateBtn.addEventListener('click', () => {
     }
     
     areaError.textContent = '';
+    houseArea = area; // Simpan luas rumah
     generateRecommendations(area);
     showStep4();
 });
@@ -421,7 +401,6 @@ function generateRecommendations(area) {
     
     const spacePerCat = area / catCount;
     
-    // Update rekomendasi ruangan dengan batasan 1 m²
     if (spacePerCat < 2) {
         html += `<li>⚠️ Ruangan sangat sempit! (${spacePerCat.toFixed(1)} m² per kucing). Kucing butuh ruang gerak yang cukup.</li>`;
     } else if (spacePerCat < 5) {
@@ -434,7 +413,6 @@ function generateRecommendations(area) {
         html += `<li>✅ Ruangan sangat luas (${spacePerCat.toFixed(1)} m² per kucing), kucing akan nyaman!</li>`;
     }
     
-    // Tambahan rekomendasi jika luas rumah sangat kecil
     if (area < 5) {
         html += `<li>🏠 Rumah sangat kecil! Rekomendasi: tambahkan vertical space (cat tree, rak) untuk memaksimalkan ruang</li>`;
     } else if (area < 10) {
@@ -494,20 +472,35 @@ function calculateConflictLevel() {
     }
 }
 
-// ==================== CANVAS ANIMASI ====================
+// ==================== CANVAS ANIMASI DENGAN SKALA RUMAH ====================
 function visualizeMovement() {
     canvas = document.getElementById('catCanvas');
     ctx = canvas.getContext('2d');
     width = canvas.width;
     height = canvas.height;
     
+    // Hitung skala: lebar rumah = sqrt(area) (karena bentuk persegi)
+    // Asumsi rumah berbentuk persegi, jadi panjang sisi = sqrt(area)
+    const houseSide = Math.sqrt(houseArea);
+    // Skala: 1 meter dalam rumah = berapa pixel di canvas?
+    // Kita mapping sisi rumah ke 90% dari ukuran canvas (biar ada margin)
+    const maxDimension = Math.min(width, height) * 0.85;
+    houseScale = maxDimension / houseSide;
+    
     fightEffects = [];
     
     cats.forEach(cat => {
+        // Posisi awal dalam meter (koordinat rumah)
+        const startX = Math.random() * houseSide;
+        const startY = Math.random() * houseSide;
+        
+        // Konversi ke pixel canvas
         cat.position = {
-            x: Math.random() * (width - 100) + 50,
-            y: Math.random() * (height - 100) + 50
+            x: (startX * houseScale) + (width - (houseSide * houseScale)) / 2,
+            y: (startY * houseScale) + (height - (houseSide * houseScale)) / 2
         };
+        
+        // Arah gerak dalam meter per frame
         cat.direction = {
             x: (Math.random() - 0.5) * 1.5,
             y: (Math.random() - 0.5) * 1.5
@@ -516,6 +509,7 @@ function visualizeMovement() {
         cat.fightTimer = 0;
     });
     
+    // Generate legend
     const legendDiv = document.getElementById('legend');
     legendDiv.innerHTML = cats.map(cat => `
         <div class="legend-item">
@@ -524,6 +518,7 @@ function visualizeMovement() {
         </div>
     `).join('');
     
+    // Tambahkan informasi luas rumah di canvas
     drawCanvas();
 }
 
@@ -532,19 +527,42 @@ function drawCanvas() {
     
     ctx.clearRect(0, 0, width, height);
     
-    // Draw grid
+    // Hitung offset untuk menempatkan rumah di tengah canvas
+    const houseSideMeters = Math.sqrt(houseArea);
+    const houseSidePixels = houseSideMeters * houseScale;
+    const offsetX = (width - houseSidePixels) / 2;
+    const offsetY = (height - houseSidePixels) / 2;
+    
+    // Draw area rumah (background putih dengan border pink)
+    ctx.fillStyle = '#fff5f7';
+    ctx.fillRect(offsetX, offsetY, houseSidePixels, houseSidePixels);
+    ctx.strokeStyle = '#e68a9e';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(offsetX, offsetY, houseSidePixels, houseSidePixels);
+    
+    // Draw grid dalam rumah (setiap 1 meter)
     ctx.strokeStyle = '#ffccdd';
     ctx.lineWidth = 1;
-    for (let i = 0; i < width; i += 50) {
+    for (let i = 0; i <= houseSideMeters; i++) {
+        const x = offsetX + (i * houseScale);
+        const y = offsetY + (i * houseScale);
+        
         ctx.beginPath();
-        ctx.moveTo(i, 0);
-        ctx.lineTo(i, height);
+        ctx.moveTo(x, offsetY);
+        ctx.lineTo(x, offsetY + houseSidePixels);
         ctx.stroke();
+        
         ctx.beginPath();
-        ctx.moveTo(0, i);
-        ctx.lineTo(width, i);
+        ctx.moveTo(offsetX, y);
+        ctx.lineTo(offsetX + houseSidePixels, y);
         ctx.stroke();
     }
+    
+    // Draw label ukuran rumah
+    ctx.fillStyle = '#b8909e';
+    ctx.font = '12px Quicksand';
+    ctx.fillText(`Luas rumah: ${houseArea} m²`, offsetX + 10, offsetY + 20);
+    ctx.fillText(`${houseSideMeters.toFixed(1)} m`, offsetX + houseSidePixels - 40, offsetY + houseSidePixels - 5);
     
     // Update fight timers
     for (let i = 0; i < fightEffects.length; i++) {
@@ -576,7 +594,10 @@ function drawCanvas() {
                                        cats[i].position.y - cats[j].position.y);
             const relation = cats[i].relationships[j] || 'roommates';
             
-            if (distance < 70) {
+            // Jarak konflik dalam pixel (skala 1 meter = houseScale pixel)
+            const conflictDistancePx = 0.5 * houseScale; // 0.5 meter dalam pixel
+            
+            if (distance < conflictDistancePx * 2) {
                 if (relation === 'conflict') {
                     ctx.beginPath();
                     ctx.moveTo(cats[i].position.x, cats[i].position.y);
@@ -623,7 +644,7 @@ function drawCanvas() {
         }
         
         ctx.beginPath();
-        ctx.arc(cat.position.x, cat.position.y, 22, 0, Math.PI * 2);
+        ctx.arc(cat.position.x, cat.position.y, 20, 0, Math.PI * 2);
         ctx.fillStyle = cat.color;
         ctx.fill();
         ctx.strokeStyle = '#5a3e4b';
@@ -700,6 +721,16 @@ function drawCanvas() {
 }
 
 function updatePositions() {
+    // Hitung batas rumah dalam pixel
+    const houseSideMeters = Math.sqrt(houseArea);
+    const houseSidePixels = houseSideMeters * houseScale;
+    const offsetX = (width - houseSidePixels) / 2;
+    const offsetY = (height - houseSidePixels) / 2;
+    const minX = offsetX + 20;
+    const maxX = offsetX + houseSidePixels - 20;
+    const minY = offsetY + 20;
+    const maxY = offsetY + houseSidePixels - 20;
+    
     cats.forEach(cat => {
         if (cat.fightTimer > 0) {
             cat.fightTimer--;
@@ -709,13 +740,15 @@ function updatePositions() {
         }
     });
     
+    // Deteksi konflik dengan jarak yang diskalakan
     for (let i = 0; i < cats.length; i++) {
         for (let j = i + 1; j < cats.length; j++) {
             const distance = Math.hypot(cats[i].position.x - cats[j].position.x, 
                                        cats[i].position.y - cats[j].position.y);
             const relation = cats[i].relationships[j] || 'roommates';
+            const conflictDistancePx = 0.5 * houseScale; // 0.5 meter dalam pixel
             
-            if (relation === 'conflict' && distance < 55) {
+            if (relation === 'conflict' && distance < conflictDistancePx) {
                 cats[i].fighting = true;
                 cats[j].fighting = true;
                 cats[i].fightTimer = 40;
@@ -729,7 +762,7 @@ function updatePositions() {
                 
                 const angle = Math.atan2(cats[j].position.y - cats[i].position.y, 
                                          cats[j].position.x - cats[i].position.x);
-                const force = 3;
+                const force = 15;
                 cats[i].position.x -= Math.cos(angle) * force;
                 cats[i].position.y -= Math.sin(angle) * force;
                 cats[j].position.x += Math.cos(angle) * force;
@@ -754,31 +787,45 @@ function updatePositions() {
         }
     }
     
+    // Update posisi dengan kecepatan yang diskalakan
     cats.forEach(cat => {
-        let speed = 1.5;
+        // Kecepatan dalam meter per frame (dikalikan scale untuk pixel)
+        let speedMeters = 0.08;
         if (cat.status === 'new') {
-            speed = 1.5 + (cat.traits.stress / 100);
+            speedMeters = 0.08 + (cat.traits.stress / 1000);
         }
         
         if (cat.fighting) {
-            speed = 2.5;
+            speedMeters = 0.15;
         }
         
-        cat.position.x += cat.direction.x * speed;
-        cat.position.y += cat.direction.y * speed;
+        const speedPx = speedMeters * houseScale;
         
-        if (cat.position.x < 25 || cat.position.x > width - 25) {
+        cat.position.x += cat.direction.x * speedPx;
+        cat.position.y += cat.direction.y * speedPx;
+        
+        // Batas dalam rumah (dengan margin 20px dari tepi)
+        if (cat.position.x < minX) {
+            cat.position.x = minX;
             cat.direction.x *= -1;
-            cat.position.x = Math.min(Math.max(cat.position.x, 25), width - 25);
         }
-        if (cat.position.y < 25 || cat.position.y > height - 25) {
+        if (cat.position.x > maxX) {
+            cat.position.x = maxX;
+            cat.direction.x *= -1;
+        }
+        if (cat.position.y < minY) {
+            cat.position.y = minY;
             cat.direction.y *= -1;
-            cat.position.y = Math.min(Math.max(cat.position.y, 25), height - 25);
+        }
+        if (cat.position.y > maxY) {
+            cat.position.y = maxY;
+            cat.direction.y *= -1;
         }
         
+        // Random direction change
         if (Math.random() < 0.02 && !cat.fighting) {
-            cat.direction.x += (Math.random() - 0.5) * 0.8;
-            cat.direction.y += (Math.random() - 0.5) * 0.8;
+            cat.direction.x += (Math.random() - 0.5) * 0.5;
+            cat.direction.y += (Math.random() - 0.5) * 0.5;
             const len = Math.hypot(cat.direction.x, cat.direction.y);
             if (len > 0) {
                 cat.direction.x /= len;
