@@ -10,6 +10,37 @@ const step2 = document.getElementById('step2');
 const step3 = document.getElementById('step3');
 const step4 = document.getElementById('step4');
 
+// ==================== FUNGSI BACK ====================
+// Back from Step 2 to Step 1
+document.getElementById('backToStep1').addEventListener('click', () => {
+    if (confirm('Kembali ke halaman awal? Data kucing yang sudah diisi akan tersimpan.')) {
+        saveCurrentCatData(); // Save current data before leaving
+        step2.classList.remove('active');
+        step1.classList.add('active');
+        // Reset cat count input to current value
+        document.getElementById('catCount').value = cats.length;
+    }
+});
+
+// Back from Step 3 to Step 2
+document.getElementById('backToStep2').addEventListener('click', () => {
+    step3.classList.remove('active');
+    step2.classList.add('active');
+    // Refresh the cat form to show the last edited cat
+    updateCatForm();
+});
+
+// Back from Step 4 to Step 3
+document.getElementById('backToStep3').addEventListener('click', () => {
+    // Stop animation if running
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
+    step4.classList.remove('active');
+    step3.classList.add('active');
+});
+
 // ==================== STEP 1: JUMLAH KUCING ====================
 const catCountInput = document.getElementById('catCount');
 const nextStep1Btn = document.getElementById('nextStep1');
@@ -128,10 +159,6 @@ function updateCatForm() {
             html += `<div class="relationship-group"><h4>🐾 Hubungan dengan kucing lain:</h4>`;
             otherCats.forEach(otherCat => {
                 const currentRelation = cat.relationships[otherCat.id] || 'roommates';
-                let relationText = '';
-                if (currentRelation === 'bestfriends') relationText = 'Best Friends';
-                else if (currentRelation === 'roommates') relationText = 'Roommates';
-                else relationText = 'Tidak Cocok';
                 
                 html += `
                     <div class="form-group">
@@ -168,15 +195,21 @@ function updateCatForm() {
         const stressSlider = document.getElementById('stress');
         const toleranceSlider = document.getElementById('tolerance');
         
-        dominanceSlider.addEventListener('input', (e) => {
-            document.getElementById('dominanceValue').textContent = e.target.value;
-        });
-        stressSlider.addEventListener('input', (e) => {
-            document.getElementById('stressValue').textContent = e.target.value;
-        });
-        toleranceSlider.addEventListener('input', (e) => {
-            document.getElementById('toleranceValue').textContent = e.target.value;
-        });
+        if (dominanceSlider) {
+            dominanceSlider.addEventListener('input', (e) => {
+                document.getElementById('dominanceValue').textContent = e.target.value;
+            });
+        }
+        if (stressSlider) {
+            stressSlider.addEventListener('input', (e) => {
+                document.getElementById('stressValue').textContent = e.target.value;
+            });
+        }
+        if (toleranceSlider) {
+            toleranceSlider.addEventListener('input', (e) => {
+                document.getElementById('toleranceValue').textContent = e.target.value;
+            });
+        }
     }
     
     // Update navigation buttons
@@ -202,7 +235,7 @@ function saveCurrentCatData() {
     const nameInput = document.getElementById('catName');
     if (nameInput && nameInput.value.trim() !== '') {
         cat.name = nameInput.value.trim();
-    } else {
+    } else if (nameInput) {
         cat.name = `Kucing ${currentCatIndex + 1}`;
     }
     
@@ -370,7 +403,7 @@ function calculateConflictLevel() {
     }
 }
 
-// ==================== CANVIS ANIMASI ====================
+// ==================== CANVAS ANIMASI ====================
 function visualizeMovement() {
     canvas = document.getElementById('catCanvas');
     ctx = canvas.getContext('2d');
