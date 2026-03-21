@@ -1,12 +1,8 @@
 body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #ffe6f0, #e6f7ff);
-    padding: 40px;
+    font-family: Arial;
+    background: linear-gradient(135deg,#ffe6f0,#e6f7ff);
     text-align: center;
-}
-
-h1 {
-    color: #333;
+    padding: 30px;
 }
 
 .container {
@@ -16,21 +12,19 @@ h1 {
     max-width: 800px;
     margin: auto;
     margin-top: 20px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-textarea, input {
+input {
     width: 90%;
     padding: 10px;
     margin: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
 }
 
 button {
-    padding: 10px 20px;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 8px;
     border: none;
-    border-radius: 10px;
     background: #ff99cc;
     cursor: pointer;
 }
@@ -39,11 +33,12 @@ button:hover {
     background: #ff66aa;
 }
 
-canvas {
-    border: 1px solid #ccc;
-    margin-top: 15px;
+textarea {
+    width: 90%;
+    margin-top: 10px;
 }
 
-.description {
-    text-align: left;
+canvas {
+    margin-top: 15px;
+    border: 1px solid #ccc;
 }
