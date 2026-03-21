@@ -1,118 +1,133 @@
-# 🐱 Multi-Cat Territory Simulation (Mockup)
+# 🐱 CatSpace Planner: Multi-Cat Territory Simulation and Planning Tool
 
+**CatSpace Planner** is a web-based interactive mockup designed to assist cat owners in planning an optimal living environment for multiple cats within a shared space.
 
-## 📌 Description
-
-This project is a web-based mockup application that simulates territorial behavior among multiple cats living in the same household. The system is designed using an **agent-based modeling approach**, where each cat is treated as an independent agent with behavioral parameters such as dominance, stress level, and social tolerance.
-
-This is a **mockup prototype**, meaning the full numerical simulation is not yet implemented. Instead, it demonstrates the **user interface, workflow, and computational structure** of the intended application.
+This project integrates basic behavioral modeling, spatial analysis, and visualization techniques to simulate cat interactions and estimate potential conflicts based on user-provided data.
 
 ---
 
-## 🧩 Features
+## 🎯 Objectives
 
-- Input multiple cats and their personality traits
-- Multi-step simulation process
-- Visual territory representation using canvas
-- Behavior analysis output (conflict & stress)
-- Recommendation system for resource allocation
+The main objectives of this project are:
 
----
-
-## 🧾 Input Variables
-
-- Number of cats  
-- Personality traits (dominance, stress, tolerance)  
-- House size  
-- Number of litter boxes  
-- Number of feeding stations  
+* To design an intuitive multi-step user interface for pet environment planning
+* To model basic behavioral traits of cats (dominance, stress, tolerance)
+* To analyze inter-cat relationships and predict potential conflicts
+* To simulate cat movement within a constrained spatial environment
+* To provide practical recommendations for improving multi-cat living conditions
 
 ---
 
-## ⚙️ Process (Computation Steps)
+## 🧠 Methodology
 
-1. **Initialize Agents**  
-   Each cat is initialized as an agent with its own behavioral parameters.
+### 1. Data Input
 
-2. **Simulate Interaction**  
-   Cats interact with each other based on proximity and personality traits.
+Users provide:
 
-3. **Generate Results**  
-   The system produces estimated conflict levels, stress levels, and territory distribution.
+* Number of cats
+* Individual cat information:
 
----
+  * Name
+  * Status (new or existing cat)
+  * Behavioral traits (dominance, stress, tolerance)
+* Relationships between cats:
 
-## 📊 Output Variables
-
-- Conflict probability  
-- Stress level estimation  
-- Territory overlap visualization (canvas)  
-- Resource allocation recommendation  
-
----
-
-## 🧠 Numerical Concepts & Algorithms
-
-### 1. Agent-Based Modeling (ABM)
-Each cat is treated as an independent agent with internal states. The overall system behavior emerges from interactions between agents.
+  * Best Friends
+  * Roommates
+  * Conflict
+* House area (in square meters)
 
 ---
 
-### 2. Nonlinear Interaction Model
-Interactions between cats depend on multiple variables:
+### 2. Behavioral Modeling
 
-- dominance level  
-- distance between cats  
-- social tolerance  
+Each cat is represented as an object containing:
 
-This creates a **nonlinear system**, where outcomes cannot be determined using a single equation.
+* Trait parameters (scaled 0–100)
+* Relationship mappings with other cats
+* Movement properties (position, direction)
 
----
+Conflict potential is estimated using:
 
-### 3. Iterative Simulation (Time-Step Based)
+* Relationship type weighting
+* Trait-based modifiers:
 
-The system is designed to simulate behavior over time using repeated updates:
-
----
-
-### 4. Conflict Detection
-
-Conflict probability can be estimated based on:
-
-- overlap of territories  
-- difference in dominance levels  
+  * Higher dominance → increased conflict probability
+  * Lower tolerance → increased conflict probability
 
 ---
 
-### 5. Why Simulation is Required
+### 3. Conflict Calculation
 
-This problem cannot be solved using direct calculation because:
+The system computes a **conflict percentage** by aggregating pairwise interaction scores between cats.
 
-- Multiple interacting agents  
-- Dynamic behavioral changes  
-- Emergent system behavior  
+General interpretation:
 
-Therefore, a **simulation-based computational approach** is required.
-
----
-
-## 🚧 Future Development
-
-- Full agent-based simulation engine  
-- Real-time animation of cat movement  
-- Machine learning for behavior prediction  
-- Heatmap-based territory visualization  
+* **< 30%** → Harmonious
+* **30–60%** → Moderate tension
+* **> 60%** → High conflict
 
 ---
 
-## 🛠️ Technologies Used
+### 4. Spatial Simulation
 
-- HTML (structure)  
-- CSS (styling)  
-- JavaScript (interaction logic)  
+* The house is assumed to be a square area
+* Area is converted into a 2D coordinate system using scaling
+* Cats move dynamically using randomized directional vectors
+* Collision detection triggers:
+
+  * Conflict animations
+  * Directional changes
 
 ---
 
-## 📌 Notes
+### 5. Recommendation System
 
-This project is created as part of a **computational modeling assignment**, focusing on designing a mockup that demonstrates system workflow rather than implementing a full simulation.
+Based on the number of cats and available space, the system suggests:
+
+* Minimum number of food bowls
+* Minimum number of litter boxes
+* Space adequacy (m² per cat)
+* Environmental improvements (e.g., vertical space)
+
+---
+
+## 🖥️ Technologies Used
+
+* **HTML5** – structure
+* **CSS3** – layout and styling
+* **JavaScript (Vanilla)** – application logic
+* **Canvas API** – visualization and animation
+
+---
+
+## 📊 Discussion
+
+This project demonstrates how simple behavioral parameters and spatial constraints can be combined to simulate interactions in a multi-agent system.
+
+Although the model is simplified, it provides insight into:
+
+* Resource competition
+* Territory overlap
+* Social compatibility among animals
+
+The visualization component enhances user understanding by translating abstract calculations into observable behavior.
+
+---
+
+## ⚠️ Limitations
+
+* Assumes house shape is always square
+* Uses simplified behavioral models (not biologically accurate)
+* No persistent data storage
+* Limited scalability for large numbers of cats
+
+---
+
+## 🔮 Future Work
+
+* Integration with real floor plan layouts
+* Advanced behavioral modeling using AI or agent-based systems
+* Data persistence (local storage or backend integration)
+* Mobile responsiveness
+* User customization for environment design
