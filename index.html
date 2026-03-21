@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teritori Kucing - Cat Territory Planner</title>
+    <title>Cat Territory Planner</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-       <!-- Step 1: Jumlah Kucing -->
+       <!-- Step 1: Number of Cats -->
         <div id="step1" class="step active">
             <div class="card">
                 <div class="cat-icon">
@@ -27,57 +27,57 @@
             </div>
         </div>
 
-        <!-- Step 2: Informasi Semua Kucing (1 Halaman) -->
+        <!-- Step 2: All Cats Information -->
         <div id="step2" class="step">
             <div class="card">
-                <!-- Tombol Back -->
-                <button id="backToStep1From2" class="btn-back">← Kembali ke Jumlah Kucing</button>
+                <!-- Back Button -->
+                <button id="backToStep1From2" class="btn-back">← Back to Cat Count</button>
                 
-                <h2>🐱 Informasi Semua Kucing</h2>
-                <p class="subtitle">Isi data masing-masing kucing di bawah ini</p>
+                <h2>🐱 All Cats Information</h2>
+                <p class="subtitle">Fill in the details for each cat below</p>
                 
                 <div id="allCatsForm" class="all-cats-form"></div>
                 
                 <div class="button-group">
-                    <button id="saveAndContinue" class="btn-primary">Simpan & Lanjutkan →</button>
+                    <button id="saveAndContinue" class="btn-primary">Save & Continue →</button>
                 </div>
             </div>
         </div>
 
-        <!-- Step 3: Input Luas Rumah -->
+        <!-- Step 3: House Area Input -->
         <div id="step3" class="step">
             <div class="card">
-                <!-- Tombol Back -->
-                <button id="backToStep2" class="btn-back">← Kembali ke Data Kucing</button>
+                <!-- Back Button -->
+                <button id="backToStep2" class="btn-back">← Back to Cat Data</button>
                 
-                <h2>🏠 Berapa luas rumahmu?</h2>
-                <p class="subtitle">Masukkan luas rumah dalam meter persegi (bentuk persegi)</p>
+                <h2>🏠 What is your house size?</h2>
+                <p class="subtitle">Enter your house area in square meters (assumed square shape)</p>
                 <div class="input-group">
-                    <input type="number" id="houseArea" placeholder="Contoh: 100" step="1">
+                    <input type="number" id="houseArea" placeholder="Example: 100" step="1">
                     <span class="unit">m²</span>
                 </div>
-                <button id="calculateBtn" class="btn-primary">Lihat Hasil →</button>
+                <button id="calculateBtn" class="btn-primary">See Results →</button>
                 <div id="areaError" class="error-message"></div>
             </div>
         </div>
 
-        <!-- Step 4: Hasil Rekomendasi & Visualisasi -->
+        <!-- Step 4: Results & Visualization -->
         <div id="step4" class="step">
             <div class="results-container">
-                <!-- Tombol Back -->
+                <!-- Back Button -->
                 <div class="back-top">
-                    <button id="backToStep3" class="btn-back">← Kembali ke Luas Rumah</button>
+                    <button id="backToStep3" class="btn-back">← Back to House Size</button>
                 </div>
                 
-                <!-- Rekomendasi -->
+                <!-- Recommendations -->
                 <div class="card recommendation-card">
-                    <h2>📋 Rekomendasi Peralatan</h2>
+                    <h2>📋 Equipment Recommendations</h2>
                     <div id="recommendations"></div>
                 </div>
 
-                <!-- Progress Bar Conflict -->
+                <!-- Conflict Progress Bar -->
                 <div class="card conflict-card">
-                    <h2>⚡ Tingkat Konflik Antar Kucing</h2>
+                    <h2>⚡ Cat Conflict Level</h2>
                     <div class="conflict-bar-container">
                         <div class="conflict-bar" id="conflictBar"></div>
                     </div>
@@ -85,14 +85,14 @@
                     <p id="conflictStatus" class="conflict-status"></p>
                 </div>
 
-                <!-- Canvas Visualisasi -->
+                <!-- Visualization Canvas -->
                 <div class="card visualization-card">
-                    <h2>🐾 Pergerakan Kucing Selama 24 Jam</h2>
-                    <p class="subtitle">Animasi pergerakan kucing di dalam rumah</p>
+                    <h2>🐾 Cat Movement Over 24 Hours</h2>
+                    <p class="subtitle">Simulation of cat movement inside your house</p>
                     <canvas id="catCanvas" width="800" height="500"></canvas>
                     <div class="legend" id="legend"></div>
                     <div class="controls">
-                        <button id="startAnimation" class="btn-primary">▶ Mulai Animasi</button>
+                        <button id="startAnimation" class="btn-primary">▶ Start Animation</button>
                         <button id="resetAnimation" class="btn-secondary">🔄 Reset</button>
                     </div>
                 </div>
