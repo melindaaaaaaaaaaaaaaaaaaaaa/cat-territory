@@ -3,6 +3,7 @@ let cats = [];
 let currentCatIndex = 0;
 let animationFrameId = null;
 let ctx, canvas, width, height;
+let fightEffects = []; // Array untuk menyimpan efek perkelahian
 
 // DOM Elements
 const step1 = document.getElementById('step1');
@@ -14,10 +15,9 @@ const step4 = document.getElementById('step4');
 // Back from Step 2 to Step 1
 document.getElementById('backToStep1').addEventListener('click', () => {
     if (confirm('Kembali ke halaman awal? Data kucing yang sudah diisi akan tersimpan.')) {
-        saveCurrentCatData(); // Save current data before leaving
+        saveCurrentCatData();
         step2.classList.remove('active');
         step1.classList.add('active');
-        // Reset cat count input to current value
         document.getElementById('catCount').value = cats.length;
     }
 });
@@ -26,13 +26,11 @@ document.getElementById('backToStep1').addEventListener('click', () => {
 document.getElementById('backToStep2').addEventListener('click', () => {
     step3.classList.remove('active');
     step2.classList.add('active');
-    // Refresh the cat form to show the last edited cat
     updateCatForm();
 });
 
 // Back from Step 4 to Step 3
 document.getElementById('backToStep3').addEventListener('click', () => {
-    // Stop animation if running
     if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
         animationFrameId = null;
@@ -49,7 +47,6 @@ const errorMessage = document.getElementById('errorMessage');
 nextStep1Btn.addEventListener('click', () => {
     const count = parseInt(catCountInput.value);
     
-    // Validasi: wajib diisi dan angka bulat
     if (catCountInput.value === '') {
         errorMessage.textContent = '❌ Jumlah kucing harus diisi!';
         return;
@@ -80,11 +77,12 @@ function initializeCats(count) {
             relationships: {},
             color: `hsl(${Math.random() * 360}, 70%, 65%)`,
             position: { x: 0, y: 0 },
-            direction: { x: 0, y: 0 }
+            direction: { x: 0, y: 0 },
+            fighting: false, // status sedang berantem
+            fightTimer: 0 // timer untuk animasi berantem
         });
     }
     
-    // Initialize relationships
     for (let i = 0; i < cats.length; i++) {
         for (let j = i + 1; j < cats.length; j++) {
             cats[i].relationships[j] = 'roommates';
@@ -102,7 +100,7 @@ function showStep2() {
     updateCatForm();
 }
 
-// ==================== STEP 2: INFORMASI KUCING (BERTAHAP) ====================
+// ==================== STEP 2: INFORMASI KUCING ====================
 function updateCatForm() {
     const cat = cats[currentCatIndex];
     const totalCats = cats.length;
@@ -153,7 +151,6 @@ function updateCatForm() {
             </div>
         `;
     } else {
-        // Relationship form for old cats
         const otherCats = cats.filter((_, idx) => idx !== currentCatIndex);
         if (otherCats.length > 0) {
             html += `<div class="relationship-group"><h4>🐾 Hubungan dengan kucing lain:</h4>`;
@@ -189,7 +186,6 @@ function updateCatForm() {
     html += `</div>`;
     document.getElementById('catForm').innerHTML = html;
     
-    // Add event listeners for sliders
     if (cat.status === 'new') {
         const dominanceSlider = document.getElementById('dominance');
         const stressSlider = document.getElementById('stress');
@@ -212,15 +208,12 @@ function updateCatForm() {
         }
     }
     
-    // Update navigation buttons
     const prevBtn = document.getElementById('prevCat');
     const nextBtn = document.getElementById('nextCat');
     const finishBtn = document.getElementById('finishCats');
     
-    // Show prev button if not first cat
     prevBtn.style.display = currentCatIndex === 0 ? 'none' : 'inline-block';
     
-    // Show next or finish based on if it's the last cat
     if (currentCatIndex === totalCats - 1) {
         nextBtn.style.display = 'none';
         finishBtn.style.display = 'inline-block';
@@ -250,7 +243,6 @@ function saveCurrentCatData() {
         if (stress) cat.traits.stress = parseInt(stress.value);
         if (tolerance) cat.traits.tolerance = parseInt(tolerance.value);
     } else {
-        // Save relationships
         const otherCats = cats.filter((_, idx) => idx !== currentCatIndex);
         otherCats.forEach(otherCat => {
             const radioSelected = document.querySelector(`input[name="rel_${otherCat.id}"]:checked`);
@@ -262,36 +254,20 @@ function saveCurrentCatData() {
     }
 }
 
-// Previous cat button
 document.getElementById('prevCat').addEventListener('click', () => {
     saveCurrentCatData();
     currentCatIndex--;
     updateCatForm();
 });
 
-// Next cat button
 document.getElementById('nextCat').addEventListener('click', () => {
     saveCurrentCatData();
     currentCatIndex++;
     updateCatForm();
 });
 
-// Finish cats button
 document.getElementById('finishCats').addEventListener('click', () => {
     saveCurrentCatData();
-    
-    // Validasi: pastikan semua kucing punya nama (optional, tapi lebih baik)
-    let allHaveNames = true;
-    cats.forEach(cat => {
-        if (!cat.name || cat.name.trim() === '') {
-            allHaveNames = false;
-        }
-    });
-    
-    if (!allHaveNames) {
-        alert('Beberapa kucing belum diberi nama. Nama default akan digunakan.');
-    }
-    
     showStep3();
 });
 
@@ -308,7 +284,6 @@ const areaError = document.getElementById('areaError');
 calculateBtn.addEventListener('click', () => {
     const area = parseFloat(houseAreaInput.value);
     
-    // Validasi: wajib diisi
     if (houseAreaInput.value === '') {
         areaError.textContent = '❌ Luas rumah harus diisi!';
         return;
@@ -330,7 +305,7 @@ function showStep4() {
     visualizeMovement();
 }
 
-// ==================== REKOMENDASI & VISUALISASI ====================
+// ==================== REKOMENDASI ====================
 function generateRecommendations(area) {
     const catCount = cats.length;
     const recommendedFoodBowls = Math.ceil(catCount + (catCount * 0.3));
@@ -340,7 +315,6 @@ function generateRecommendations(area) {
     html += `<li>🍽️ Tempat makan: minimal ${recommendedFoodBowls} buah (${catCount} kucing + 30% cadangan)</li>`;
     html += `<li>📦 Kotak pasir: minimal ${recommendedLitterBoxes} buah (jumlah kucing + 1)</li>`;
     
-    // Space recommendation
     const spacePerCat = area / catCount;
     if (spacePerCat < 15) {
         html += `<li>⚠️ Ruangan terbatas (${spacePerCat.toFixed(1)} m² per kucing), perlu pengaturan yang baik untuk mengurangi konflik</li>`;
@@ -351,7 +325,6 @@ function generateRecommendations(area) {
     html += '</ul>';
     document.getElementById('recommendations').innerHTML = html;
     
-    // Calculate conflict level
     calculateConflictLevel();
 }
 
@@ -368,7 +341,6 @@ function calculateConflictLevel() {
             else if (relation === 'roommates') conflictScore = 30;
             else if (relation === 'bestfriends') conflictScore = 10;
             
-            // Add trait influence for new cats
             if (cats[i].status === 'new') {
                 conflictScore += (cats[i].traits.dominance - 50) / 5;
                 conflictScore += (100 - cats[i].traits.tolerance) / 5;
@@ -403,14 +375,15 @@ function calculateConflictLevel() {
     }
 }
 
-// ==================== CANVAS ANIMASI ====================
+// ==================== CANVAS ANIMASI DENGAN DETEKSI BERANTEM ====================
 function visualizeMovement() {
     canvas = document.getElementById('catCanvas');
     ctx = canvas.getContext('2d');
     width = canvas.width;
     height = canvas.height;
     
-    // Assign random starting positions and directions
+    fightEffects = [];
+    
     cats.forEach(cat => {
         cat.position = {
             x: Math.random() * (width - 100) + 50,
@@ -420,10 +393,10 @@ function visualizeMovement() {
             x: (Math.random() - 0.5) * 1.5,
             y: (Math.random() - 0.5) * 1.5
         };
-        cat.conflictCount = 0;
+        cat.fighting = false;
+        cat.fightTimer = 0;
     });
     
-    // Generate legend
     const legendDiv = document.getElementById('legend');
     legendDiv.innerHTML = cats.map(cat => `
         <div class="legend-item">
@@ -438,10 +411,9 @@ function visualizeMovement() {
 function drawCanvas() {
     if (!ctx) return;
     
-    // Clear canvas
     ctx.clearRect(0, 0, width, height);
     
-    // Draw grid (room)
+    // Draw grid
     ctx.strokeStyle = '#ffccdd';
     ctx.lineWidth = 1;
     for (let i = 0; i < width; i += 50) {
@@ -455,32 +427,67 @@ function drawCanvas() {
         ctx.stroke();
     }
     
-    // Reset conflict count
-    cats.forEach(cat => cat.conflictCount = 0);
+    // Update fight timers
+    for (let i = 0; i < fightEffects.length; i++) {
+        fightEffects[i].timer--;
+        if (fightEffects[i].timer <= 0) {
+            fightEffects.splice(i, 1);
+            i--;
+        }
+    }
     
-    // Draw connections first (so they appear behind cats)
+    // Draw fight effects
+    fightEffects.forEach(effect => {
+        const alpha = effect.timer / 30;
+        ctx.beginPath();
+        ctx.arc(effect.x, effect.y, 35, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 107, 107, ${alpha * 0.5})`;
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.arc(effect.x, effect.y, 25, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 107, 107, ${alpha * 0.7})`;
+        ctx.fill();
+    });
+    
+    // Draw connections
     for (let i = 0; i < cats.length; i++) {
         for (let j = i + 1; j < cats.length; j++) {
             const distance = Math.hypot(cats[i].position.x - cats[j].position.x, 
                                        cats[i].position.y - cats[j].position.y);
+            const relation = cats[i].relationships[j] || 'roommates';
             
-            if (distance < 60) {
-                const relation = cats[i].relationships[j] || 'roommates';
+            if (distance < 70) {
                 if (relation === 'conflict') {
                     ctx.beginPath();
                     ctx.moveTo(cats[i].position.x, cats[i].position.y);
                     ctx.lineTo(cats[j].position.x, cats[j].position.y);
                     ctx.strokeStyle = '#ff6b6b';
-                    ctx.lineWidth = 3;
+                    ctx.lineWidth = 4;
                     ctx.stroke();
                     
-                    cats[i].conflictCount++;
-                    cats[j].conflictCount++;
+                    // Draw dashed line for conflict
+                    ctx.beginPath();
+                    ctx.moveTo(cats[i].position.x, cats[i].position.y);
+                    ctx.lineTo(cats[j].position.x, cats[j].position.y);
+                    ctx.strokeStyle = '#ff4444';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([5, 5]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    
                 } else if (relation === 'bestfriends') {
                     ctx.beginPath();
                     ctx.moveTo(cats[i].position.x, cats[i].position.y);
                     ctx.lineTo(cats[j].position.x, cats[j].position.y);
                     ctx.strokeStyle = '#a8e6cf';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                } else if (relation === 'roommates') {
+                    ctx.beginPath();
+                    ctx.moveTo(cats[i].position.x, cats[i].position.y);
+                    ctx.lineTo(cats[j].position.x, cats[j].position.y);
+                    ctx.strokeStyle = '#ffccdd';
                     ctx.lineWidth = 2;
                     ctx.stroke();
                 }
@@ -490,6 +497,14 @@ function drawCanvas() {
     
     // Draw cats
     cats.forEach((cat, index) => {
+        // Shadow effect when fighting
+        if (cat.fighting) {
+            ctx.shadowColor = 'rgba(255, 107, 107, 0.8)';
+            ctx.shadowBlur = 15;
+        } else {
+            ctx.shadowBlur = 0;
+        }
+        
         // Draw cat circle
         ctx.beginPath();
         ctx.arc(cat.position.x, cat.position.y, 22, 0, Math.PI * 2);
@@ -499,6 +514,24 @@ function drawCanvas() {
         ctx.lineWidth = 2;
         ctx.stroke();
         
+        ctx.shadowBlur = 0;
+        
+        // Draw angry eyebrows when fighting
+        if (cat.fighting) {
+            ctx.beginPath();
+            ctx.moveTo(cat.position.x - 12, cat.position.y - 12);
+            ctx.lineTo(cat.position.x - 4, cat.position.y - 8);
+            ctx.lineTo(cat.position.x - 12, cat.position.y - 4);
+            ctx.fillStyle = '#5a3e4b';
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(cat.position.x + 12, cat.position.y - 12);
+            ctx.lineTo(cat.position.x + 4, cat.position.y - 8);
+            ctx.lineTo(cat.position.x + 12, cat.position.y - 4);
+            ctx.fill();
+        }
+        
         // Draw cat face
         ctx.fillStyle = '#5a3e4b';
         ctx.beginPath();
@@ -507,6 +540,17 @@ function drawCanvas() {
         ctx.beginPath();
         ctx.arc(cat.position.x + 7, cat.position.y - 5, 2.5, 0, Math.PI * 2);
         ctx.fill();
+        
+        // Draw angry eyes when fighting
+        if (cat.fighting) {
+            ctx.fillStyle = '#ff6b6b';
+            ctx.beginPath();
+            ctx.arc(cat.position.x - 7, cat.position.y - 5, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(cat.position.x + 7, cat.position.y - 5, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
         
         // Draw nose
         ctx.fillStyle = '#ff9999';
@@ -532,21 +576,93 @@ function drawCanvas() {
         ctx.font = 'bold 12px Quicksand';
         ctx.fillText(cat.name || `Kucing ${cat.id + 1}`, cat.position.x - 20, cat.position.y - 28);
         
-        // Draw conflict indicator
-        if (cat.conflictCount > 0) {
+        // Draw EXCLAMATION MARK when fighting (bigger and more dramatic)
+        if (cat.fighting) {
             ctx.fillStyle = '#ff6b6b';
+            ctx.font = 'bold 32px Arial';
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#ff0000';
+            ctx.fillText('❗', cat.position.x + 15, cat.position.y - 25);
             ctx.font = 'bold 24px Arial';
-            ctx.fillText('⚠️', cat.position.x + 15, cat.position.y - 20);
+            ctx.fillText('⚡', cat.position.x + 5, cat.position.y - 35);
+            ctx.shadowBlur = 0;
         }
     });
 }
 
 function updatePositions() {
+    // Reset fighting status
     cats.forEach(cat => {
-        // Speed based on stress level for new cats
+        if (cat.fightTimer > 0) {
+            cat.fightTimer--;
+            if (cat.fightTimer <= 0) {
+                cat.fighting = false;
+            }
+        }
+    });
+    
+    // Check for conflicts between cats
+    for (let i = 0; i < cats.length; i++) {
+        for (let j = i + 1; j < cats.length; j++) {
+            const distance = Math.hypot(cats[i].position.x - cats[j].position.x, 
+                                       cats[i].position.y - cats[j].position.y);
+            const relation = cats[i].relationships[j] || 'roommates';
+            
+            // If they are in conflict and get close -> FIGHT!
+            if (relation === 'conflict' && distance < 55) {
+                // Set fighting status
+                cats[i].fighting = true;
+                cats[j].fighting = true;
+                cats[i].fightTimer = 40;
+                cats[j].fightTimer = 40;
+                
+                // Add fight effect
+                fightEffects.push({
+                    x: (cats[i].position.x + cats[j].position.x) / 2,
+                    y: (cats[i].position.y + cats[j].position.y) / 2,
+                    timer: 30
+                });
+                
+                // Push them apart (they run away after fighting)
+                const angle = Math.atan2(cats[j].position.y - cats[i].position.y, 
+                                         cats[j].position.x - cats[i].position.x);
+                const force = 3;
+                cats[i].position.x -= Math.cos(angle) * force;
+                cats[i].position.y -= Math.sin(angle) * force;
+                cats[j].position.x += Math.cos(angle) * force;
+                cats[j].position.y += Math.sin(angle) * force;
+                
+                // Change direction
+                cats[i].direction.x += (Math.random() - 0.5) * 1;
+                cats[i].direction.y += (Math.random() - 0.5) * 1;
+                cats[j].direction.x += (Math.random() - 0.5) * 1;
+                cats[j].direction.y += (Math.random() - 0.5) * 1;
+                
+                // Normalize directions
+                let len = Math.hypot(cats[i].direction.x, cats[i].direction.y);
+                if (len > 0) {
+                    cats[i].direction.x /= len;
+                    cats[i].direction.y /= len;
+                }
+                len = Math.hypot(cats[j].direction.x, cats[j].direction.y);
+                if (len > 0) {
+                    cats[j].direction.x /= len;
+                    cats[j].direction.y /= len;
+                }
+            }
+        }
+    }
+    
+    // Update positions
+    cats.forEach(cat => {
         let speed = 1.5;
         if (cat.status === 'new') {
             speed = 1.5 + (cat.traits.stress / 100);
+        }
+        
+        // If fighting, move faster (running away)
+        if (cat.fighting) {
+            speed = 2.5;
         }
         
         cat.position.x += cat.direction.x * speed;
@@ -563,10 +679,9 @@ function updatePositions() {
         }
         
         // Random direction change
-        if (Math.random() < 0.02) {
+        if (Math.random() < 0.02 && !cat.fighting) {
             cat.direction.x += (Math.random() - 0.5) * 0.8;
             cat.direction.y += (Math.random() - 0.5) * 0.8;
-            // Normalize
             const len = Math.hypot(cat.direction.x, cat.direction.y);
             if (len > 0) {
                 cat.direction.x /= len;
@@ -605,7 +720,6 @@ function stopAndReset() {
 document.getElementById('startAnimation').addEventListener('click', startAnimation);
 document.getElementById('resetAnimation').addEventListener('click', stopAndReset);
 
-// Initialize canvas on load
 window.addEventListener('load', () => {
     canvas = document.getElementById('catCanvas');
     if (canvas) {
