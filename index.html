@@ -25,33 +25,285 @@
                 </div>
                 <div id="errorMessage" class="error-message"></div>
             </div>
-                <div class="description">
-                  <h2>Application Description</h2>
-                  <p>This application helps users plan a living environment for multiple cats..</p>
-  
-                 <h3>How to Use</h3>
-                  <ul>
-                    <li>Step 1: Enter number of cats</li>
-                    <li>Step 2: Fill in cat information</li>
-                    <li>Step 3: Input house area</li>
-                    <li>Step 4: View results</li>
-                  </ul>
-                  <br>  
-                 <h2>Numerical Concepts and Algorithms</h2>
-
-                    <p>
-                    This application uses basic numerical modeling to estimate conflict levels 
-                    between cats based on their traits and relationships.
-                    </p>
-
-                    <ul>
-                      <li>Conflict score is calculated using weighted relationships (best friends, roommates, conflict)</li>
-                      <li>Trait values such as dominance and tolerance modify the base conflict score</li>
-                      <li>Average conflict percentage is computed across all cat pairs</li>
-                      <li>House area is converted into a 2D coordinate system using square root scaling</li>
-                      <li>Cat movement is simulated using random directional vectors and boundary constraints</li>
-                    </ul>
+       <!-- ==================== DESCRIPTION & EXPLANATION SECTION ==================== -->
+    <div class="info-section">
+                <!-- Bagian 1: Deskripsi Aplikasi dan Cara Penggunaan -->
+                <div class="info-card">
+                    <h2>📱 Tentang Aplikasi Ini</h2>
+                    <div class="info-content">
+                        <p><strong>CatSpace Planner</strong> adalah aplikasi perencana teritori kucing yang membantu pemilik kucing untuk:</p>
+                        <ul>
+                            <li>🐱 Mendata jumlah kucing dan karakteristik masing-masing</li>
+                            <li>🏠 Menyesuaikan tata letak rumah dengan kebutuhan kucing</li>
+                            <li>📊 Menganalisis tingkat konflik antar kucing</li>
+                            <li>🎬 Memvisualisasikan pergerakan kucing selama 24 jam</li>
+                            <li>📋 Memberikan rekomendasi jumlah tempat makan dan kotak pasir</li>
+                        </ul>
+                    </div>
                 </div>
+            
+                <div class="info-card">
+                    <h2>📖 Cara Penggunaan</h2>
+                    <div class="info-content">
+                        <h3>📝 Input Elements</h3>
+                        <table class="info-table">
+                            <thead>
+                                <tr>
+                                    <th>Elemen Input</th>
+                                    <th>Fungsi</th>
+                                    <th>Cara Mengisi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Jumlah Kucing</strong></td>
+                                    <td>Menentukan berapa banyak kucing yang akan direncanakan</td>
+                                    <td>Masukkan angka bulat (1-10)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nama Kucing</strong></td>
+                                    <td>Mengidentifikasi setiap kucing</td>
+                                    <td>Isi nama unik untuk setiap kucing</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Status Kucing</strong></td>
+                                    <td>Menentukan apakah kucing baru atau lama</td>
+                                    <td>Pilih "Kucing Baru" atau "Kucing Lama"</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Trait Sliders</strong> (untuk kucing baru)</td>
+                                    <td>Mengatur karakter Dominance, Stress, Tolerance</td>
+                                    <td>Geser slider dari 0-100 sesuai karakter kucing</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Hubungan Kucing</strong> (untuk kucing lama)</td>
+                                    <td>Menentukan relasi antar kucing yang sudah tinggal bersama</td>
+                                    <td>Pilih Best Friends, Roommates, atau Tidak Cocok</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Luas Rumah</strong></td>
+                                    <td>Menentukan ukuran area yang tersedia untuk kucing</td>
+                                    <td>Masukkan luas dalam m² (minimal 1 m²)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+            
+                        <h3>🔘 Button Elements</h3>
+                        <table class="info-table">
+                            <thead>
+                                <tr>
+                                    <th>Tombol</th>
+                                    <th>Fungsi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Lanjutkan →</strong></td>
+                                    <td>Melanjutkan ke tahap berikutnya setelah input valid</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>← Kembali</strong></td>
+                                    <td>Kembali ke tahap sebelumnya untuk mengedit data</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Simpan & Lanjutkan</strong></td>
+                                    <td>Menyimpan semua data kucing dan melanjutkan ke input luas rumah</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Lihat Hasil →</strong></td>
+                                    <td>Menampilkan rekomendasi dan visualisasi pergerakan</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>▶ Mulai Animasi / ⏸ Berhenti</strong></td>
+                                    <td>Memulai atau menghentikan animasi pergerakan kucing</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>🔄 Reset</strong></td>
+                                    <td>Mengatur ulang posisi kucing ke titik awal</td>
+                                </tr>
+                            </tbody>
+                        </table>
+            
+                        <h3>📊 Output Elements</h3>
+                        <table class="info-table">
+                            <thead>
+                                <tr>
+                                    <th>Output</th>
+                                    <th>Fungsi</th>
+                                    <th>Interpretasi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Rekomendasi Peralatan</strong></td>
+                                    <td>Memberi saran jumlah tempat makan dan kotak pasir</td>
+                                    <td>Minimal = jumlah kucing + 30% untuk tempat makan, jumlah kucing + 1 untuk kotak pasir</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tingkat Konflik</strong></td>
+                                    <td>Menampilkan persentase konflik antar kucing</td>
+                                    <td>&lt;30% = Harmonis, 30-60% = Sedang, &gt;60% = Tinggi</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Progress Bar Conflict</strong></td>
+                                    <td>Visualisasi tingkat konflik dalam bentuk bar</td>
+                                    <td>Semakin panjang bar merah, semakin tinggi konflik</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Canvas Animasi</strong></td>
+                                    <td>Visualisasi pergerakan kucing dalam rumah</td>
+                                    <td>Lingkaran berwarna = kucing, garis merah = konflik, ❗ = berantem</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Legend</strong></td>
+                                    <td>Menampilkan warna dan nama setiap kucing</td>
+                                    <td>Memudahkan identifikasi kucing di canvas</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            
+                <!-- Bagian 2: Konsep Numerik dan Algoritma -->
+                <div class="info-card">
+                    <h2>🧮 Konsep Numerik & Algoritma (Untuk Pengembangan Fungsional)</h2>
+                    
+                    <div class="info-content">
+                        <h3>1. Perhitungan Tingkat Konflik</h3>
+                        <div class="algorithm-box">
+                            <p><strong>Rumus Dasar:</strong></p>
+                            <pre>
+            ConflictScore(cat_i, cat_j) = BaseScore(relation) + TraitInfluence(cat_i) + TraitInfluence(cat_j)
+            
+            Dimana:
+            - BaseScore(relation):
+              • Best Friends    → 10
+              • Roommates       → 30  
+              • Tidak Cocok     → 80
+            
+            - TraitInfluence(cat):
+              • Dominance Influence  = (Dominance - 50) / 5
+              • Tolerance Influence  = (100 - Tolerance) / 5
+              • Total Trait Influence = DominanceInfluence + ToleranceInfluence
+              • (Hanya berlaku untuk kucing dengan status "Baru")
+            
+            Total Conflict = Σ ConflictScore(cat_i, cat_j) / jumlah pasangan
+                            </pre>
+                            <p><strong>Interpretasi:</strong> Semakin tinggi nilai, semakin besar potensi konflik.</p>
+                        </div>
+            
+                        <h3>2. Rekomendasi Jumlah Peralatan</h3>
+                        <div class="algorithm-box">
+                            <p><strong>Formula:</strong></p>
+                            <pre>
+            Tempat Makan Minimal   = ⌈ jumlahKucing × 1.3 ⌉
+            Kotak Pasir Minimal    = jumlahKucing + 1
+            
+            Rumus ini berdasarkan:
+            - Golden Rule of Cat Nutrition: 1 tempat makan per kucing + 30% cadangan
+            - Cat Litter Box Rule: 1 kotak pasir per kucing + 1 tambahan
+                            </pre>
+                        </div>
+            
+                        <h3>3. Skala Pergerakan dengan Luas Rumah</h3>
+                        <div class="algorithm-box">
+                            <p><strong>Konversi Luas ke Pixel:</strong></p>
+                            <pre>
+            Luas Rumah (m²)        = user input
+            Sisi Rumah (meter)     = √luasRumah
+            Skala (pixel/meter)    = (canvasSize × 0.85) / sisiRumah
+            Offset (pixel)         = (canvasSize - (sisiRumah × skala)) / 2
+            
+            Posisi Kucing (pixel)  = offset + (posisiMeter × skala)
+                            </pre>
+                            <p><strong>Kecepatan Gerak:</strong> Tetap 2.5 pixel/frame (tidak tergantung luas rumah), sehingga pergerakan selalu nyaman dilihat.</p>
+                        </div>
+            
+                        <h3>4. Algoritma Deteksi Konflik & Animasi</h3>
+                        <div class="algorithm-box">
+                            <p><strong>State Machine untuk Perkelahian:</strong></p>
+                            <pre>
+            IF jarak(kucing_i, kucing_j) < thresholdKonflik AND hubungan = "Tidak Cocok" THEN
+                statusFighting = true untuk kedua kucing
+                fightTimer = 40 frame (≈ 1.3 detik)
+                
+                // Efek tolakan
+                posisiBaru = posisiLama + (arah × force)
+                
+                // Perubahan arah
+                arahBaru = arahLama + random offset
+                arahBaru = normalize(arahBaru)
+            END IF
+                            </pre>
+                        </div>
+            
+                        <h3>5. Algoritma Pergerakan Kucing</h3>
+                        <div class="algorithm-box">
+                            <p><strong>Brownian Motion dengan Bouncing:</strong></p>
+                            <pre>
+            Setiap frame:
+                posisi.x += arah.x × kecepatan
+                posisi.y += arah.y × kecepatan
+                
+                IF posisi menyentuh batas rumah THEN
+                    arah.x = -arah.x atau arah.y = -arah.y
+                    posisi = batas + margin
+                END IF
+                
+                IF random() < 0.02 THEN // 2% chance per frame
+                    arah.x += (random() - 0.5) × 0.8
+                    arah.y += (random() - 0.5) × 0.8
+                    arah = normalize(arah) // panjang vektor = 1
+                END IF
+                            </pre>
+                            <p><strong>Kecepatan Dinamis:</strong></p>
+                            <pre>
+            kecepatanDasar = 2.5 pixel/frame
+            IF status = "Baru" THEN
+                kecepatan = 2.5 + (stress / 100)  // Kucing stres bergerak lebih cepat
+            END IF
+            IF fighting = true THEN
+                kecepatan = 4.0  // Lari saat berantem
+            END IF
+                            </pre>
+                        </div>
+            
+                        <h3>6. Visualisasi dengan Canvas</h3>
+                        <div class="algorithm-box">
+                            <p><strong>Teknik Rendering:</strong></p>
+                            <ul>
+                                <li><strong>Grid:</strong> Menggambar garis setiap 1 meter sesuai skala</li>
+                                <li><strong>Kucing:</strong> Lingkaran dengan warna unik per kucing + fitur wajah (mata, hidung, telinga)</li>
+                                <li><strong>Garis Hubungan:</strong>
+                                    <ul>
+                                        <li>Garis merah putus-putus = konflik aktif</li>
+                                        <li>Garis merah solid = hubungan tidak cocok</li>
+                                        <li>Garis hijau = best friends</li>
+                                        <li>Garis pink = roommates</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Efek Perkelahian:</strong> Lingkaran merah berdenyut dan tanda seru (!) di atas kucing</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Bagian 3: Catatan Pengembangan -->
+                <div class="info-card note-card">
+                    <h2>📌 Catatan untuk Pengembangan Fungsional</h2>
+                    <div class="info-content">
+                        <p>Saat ini aplikasi masih dalam tahap <strong>mockup/interaktif</strong> dengan simulasi data. Untuk pengembangan menjadi aplikasi yang fully functional, diperlukan:</p>
+                        <ul>
+                            <li><strong>Backend Database:</strong> Menyimpan data kucing, preferensi, dan riwayat konflik</li>
+                            <li><strong>User Authentication:</strong> Multi-user profile untuk menyimpan berbagai skenario rumah</li>
+                            <li><strong>Machine Learning:</strong> Untuk memprediksi pola konflik berdasarkan karakteristik kucing</li>
+                            <li><strong>3D Visualization:</strong> Menggunakan Three.js untuk visualisasi rumah 3D yang lebih realistis</li>
+                            <li><strong>Export Feature:</strong> Mengexport rekomendasi ke PDF atau berbagi dengan veterinarian</li>
+                            <li><strong>IoT Integration:</strong> Terhubung dengan smart feeder dan smart litter box untuk monitoring real-time</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Step 2: All Cats Information -->
