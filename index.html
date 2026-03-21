@@ -23,17 +23,18 @@
             </div>
         </div>
 
-        <!-- Step 2: Informasi Kucing -->
+        <!-- Step 2: Informasi Kucing (akan muncul bertahap) -->
         <div id="step2" class="step">
             <div class="card">
                 <div class="progress-indicator">
-                    <span id="currentCatIndex">1</span> / <span id="totalCats">0</span>
+                    Kucing <span id="currentCatIndex">1</span> dari <span id="totalCats">0</span>
                 </div>
                 <h2 id="catTitle">Informasi Kucing #1</h2>
                 <div id="catForm"></div>
                 <div class="button-group">
                     <button id="prevCat" class="btn-secondary" style="display: none;">← Sebelumnya</button>
-                    <button id="nextCat" class="btn-primary">Selanjutnya →</button>
+                    <button id="nextCat" class="btn-primary" style="display: none;">Selanjutnya →</button>
+                    <button id="finishCats" class="btn-primary" style="display: none;">Selesai →</button>
                 </div>
             </div>
         </div>
@@ -48,6 +49,7 @@
                     <span class="unit">m²</span>
                 </div>
                 <button id="calculateBtn" class="btn-primary">Lihat Hasil →</button>
+                <div id="areaError" class="error-message"></div>
             </div>
         </div>
 
