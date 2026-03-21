@@ -14,7 +14,7 @@ function generateCatForms() {
             <div class="cat-block">
                 <h3>Kucing ${i+1}</h3>
 
-                <select id="type${i}" onchange="updateCatForm(${i}, ${count})">
+                <select id="type${i}" onchange="updateAllForms(${count})">
                     <option value="new">New Cat</option>
                     <option value="old">Existing Cat</option>
                 </select>
@@ -26,26 +26,19 @@ function generateCatForms() {
 
     container.innerHTML += `<button onclick="saveCats(${count})">Next</button>`;
 
-    for (let i = 0; i < count; i++) {
-        renderNewCat(i);
-    }
+    updateAllForms(count);
 }
 
-// SWITCH
-function updateCatForm(i, total) {
-    let type = document.getElementById(`type${i}`).value;
+// 🔥 RENDER SEMUA (INI KUNCI FIX)
+function updateAllForms(total) {
+    for (let i = 0; i < total; i++) {
+        let typeEl = document.getElementById(`type${i}`);
+        if (!typeEl) continue;
 
-    if (type === "new") {
-        renderNewCat(i);
-    } else {
-        renderExistingCat(i, total);
-    }
-
-    // refresh semua existing cat
-    for (let k = 0; k < total; k++) {
-        let t = document.getElementById(`type${k}`).value;
-        if (t === "old") {
-            renderExistingCat(k, total);
+        if (typeEl.value === "new") {
+            renderNewCat(i);
+        } else {
+            renderExistingCat(i, total);
         }
     }
 }
@@ -59,25 +52,26 @@ function renderNewCat(i) {
     `;
 }
 
-// EXISTING CAT (FIXED 🔥)
+// EXISTING CAT (SUPER STRICT)
 function renderExistingCat(i, total) {
     let html = `<p>Hubungan dengan kucing lain:</p>`;
 
     for (let j = 0; j < total; j++) {
-        if (j !== i) {
-            let otherType = document.getElementById(`type${j}`)?.value;
+        if (j === i) continue;
 
-            if (otherType === "old") {
-                html += `
-                    Kucing ${i+1} & ${j+1}:
-                    <select id="rel_${i}_${j}">
-                        <option value="friend">Best Friends</option>
-                        <option value="roommate">Roommates</option>
-                        <option value="enemy">Tidak Cocok</option>
-                    </select><br>
-                `;
-            }
-        }
+        let otherTypeEl = document.getElementById(`type${j}`);
+
+        // ❗ FIX: skip kalau element ga ada ATAU bukan existing
+        if (!otherTypeEl || otherTypeEl.value !== "old") continue;
+
+        html += `
+            Kucing ${i+1} & ${j+1}:
+            <select id="rel_${i}_${j}">
+                <option value="friend">Best Friends</option>
+                <option value="roommate">Roommates</option>
+                <option value="enemy">Tidak Cocok</option>
+            </select><br>
+        `;
     }
 
     if (html === `<p>Hubungan dengan kucing lain:</p>`) {
@@ -116,18 +110,18 @@ function saveCats(count) {
 
         if (type === "old") {
             for (let j = 0; j < count; j++) {
-                if (j !== i) {
-                    let otherType = document.getElementById(`type${j}`).value;
+                if (j === i) continue;
 
-                    if (otherType === "old") {
-                        let relEl = document.getElementById(`rel_${i}_${j}`);
-                        if (relEl) {
-                            relations.push({
-                                i: i,
-                                j: j,
-                                type: relEl.value
-                            });
-                        }
+                let otherType = document.getElementById(`type${j}`).value;
+
+                if (otherType === "old") {
+                    let relEl = document.getElementById(`rel_${i}_${j}`);
+                    if (relEl) {
+                        relations.push({
+                            i: i,
+                            j: j,
+                            type: relEl.value
+                        });
                     }
                 }
             }
@@ -137,7 +131,7 @@ function saveCats(count) {
     document.getElementById("step3").style.display = "block";
 }
 
-// SIMULASI
+// SIMULASI (tetap sama)
 function startSimulation() {
     let houseSize = document.getElementById("houseSize").value;
     if (!houseSize) return alert("Isi luas rumah!");
