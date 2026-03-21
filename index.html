@@ -12,57 +12,28 @@
 
 <div class="container">
 
-    <h3>Input Parameters</h3>
+    <h3>Number of Cats</h3>
+    <input type="number" id="numCats" placeholder="Enter number of cats">
+    <button id="generateInputs">Generate Cat Inputs</button>
 
-    <input type="number" id="numCats" placeholder="Number of Cats">
+    <div id="catInputs"></div>
 
-    <textarea id="traits" rows="4"
-    placeholder="Enter personality traits (dominance, stress, tolerance) per cat..."></textarea>
-
+    <h3>Environment</h3>
     <input type="number" id="houseSize" placeholder="House Size (m²)">
     <input type="number" id="litterBoxes" placeholder="Number of Litter Boxes">
     <input type="number" id="feedingStations" placeholder="Number of Feeding Stations">
 
-    <h3>Simulation Controls</h3>
-
-    <button id="btnRun">Run Simulation (3 Processes)</button>
-    <button id="btnClear">Clear All Input</button>
+    <h3>Controls</h3>
+    <button id="btnRun">Run Simulation</button>
+    <button id="btnClear">Clear All</button>
 
     <h3>Outputs</h3>
+    <textarea id="outputText" rows="6"></textarea>
 
-    <textarea id="outputText" rows="5"
-    placeholder="Simulation results will appear here..."></textarea>
-
-    <canvas id="outputCanvas" width="400" height="300"></canvas>
+    <canvas id="canvas" width="500" height="350"></canvas>
 
 </div>
 
-<div class="container description">
-    <h3>Description</h3>
-
-    <p>
-        This computation application mockup simulates territorial behavior among multiple cats
-        using agent-based modeling.
-    </p>
-
-    <h4>How to Use</h4>
-    <ul>
-        <li>Enter number of cats</li>
-        <li>Fill personality traits</li>
-        <li>Set house parameters</li>
-        <li>Click Run Simulation</li>
-    </ul>
-
-    <h4>Numerical Concepts</h4>
-    <ul>
-        <li>Agent-Based Modeling (ABM)</li>
-        <li>Monte Carlo simulation</li>
-        <li>Nonlinear interaction</li>
-        <li>Time-stepping iteration</li>
-    </ul>
-</div>
-
-<!-- PENTING: defer -->
 <script src="script.js" defer></script>
 
 </body>
