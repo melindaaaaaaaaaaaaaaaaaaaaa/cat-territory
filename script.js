@@ -393,8 +393,8 @@ calculateBtn.addEventListener('click', () => {
         return;
     }
     
-    if (isNaN(area) || area < 10) {
-        areaError.textContent = '❌ Masukkan luas rumah yang valid (minimal 10 m²)';
+    if (isNaN(area) || area < 1) {
+        areaError.textContent = '❌ Masukkan luas rumah yang valid (minimal 1 m²)';
         return;
     }
     
@@ -420,10 +420,25 @@ function generateRecommendations(area) {
     html += `<li>📦 Kotak pasir: minimal ${recommendedLitterBoxes} buah (jumlah kucing + 1)</li>`;
     
     const spacePerCat = area / catCount;
-    if (spacePerCat < 15) {
+    
+    // Update rekomendasi ruangan dengan batasan 1 m²
+    if (spacePerCat < 2) {
+        html += `<li>⚠️ Ruangan sangat sempit! (${spacePerCat.toFixed(1)} m² per kucing). Kucing butuh ruang gerak yang cukup.</li>`;
+    } else if (spacePerCat < 5) {
         html += `<li>⚠️ Ruangan terbatas (${spacePerCat.toFixed(1)} m² per kucing), perlu pengaturan yang baik untuk mengurangi konflik</li>`;
+    } else if (spacePerCat < 10) {
+        html += `<li>😐 Ruangan cukup (${spacePerCat.toFixed(1)} m² per kucing), masih perlu perhatian ekstra</li>`;
+    } else if (spacePerCat < 15) {
+        html += `<li>👍 Ruangan lumayan luas (${spacePerCat.toFixed(1)} m² per kucing)</li>`;
     } else {
-        html += `<li>✅ Ruangan cukup luas (${spacePerCat.toFixed(1)} m² per kucing)</li>`;
+        html += `<li>✅ Ruangan sangat luas (${spacePerCat.toFixed(1)} m² per kucing), kucing akan nyaman!</li>`;
+    }
+    
+    // Tambahan rekomendasi jika luas rumah sangat kecil
+    if (area < 5) {
+        html += `<li>🏠 Rumah sangat kecil! Rekomendasi: tambahkan vertical space (cat tree, rak) untuk memaksimalkan ruang</li>`;
+    } else if (area < 10) {
+        html += `<li>📦 Rumah kecil, pertimbangkan untuk menambah tempat persembunyian dan vertical space</li>`;
     }
     
     html += '</ul>';
