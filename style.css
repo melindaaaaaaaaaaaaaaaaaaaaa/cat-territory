@@ -33,6 +33,155 @@ body {
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
 }
 
+/* Info Section - Description & Explanation */
+.info-section {
+    max-width: 1200px;
+    margin: 40px auto 20px;
+}
+
+.info-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 30px;
+    padding: 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.info-card h2 {
+    font-size: 1.5rem;
+    color: #e68a9e;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ffecf0;
+}
+
+.info-card h3 {
+    font-size: 1.2rem;
+    color: #d47a8e;
+    margin: 20px 0 15px 0;
+}
+
+.info-content {
+    color: #5a3e4b;
+    line-height: 1.6;
+}
+
+.info-content p {
+    margin-bottom: 12px;
+}
+
+.info-content ul {
+    margin: 10px 0 15px 25px;
+}
+
+.info-content li {
+    margin: 8px 0;
+}
+
+/* Table Styling */
+.info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 0.9rem;
+}
+
+.info-table th {
+    background: #ffecf0;
+    color: #e68a9e;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    border-radius: 12px 0 0 0;
+}
+
+.info-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #ffecf0;
+}
+
+.info-table tr:hover {
+    background: #fff5f7;
+}
+
+/* Algorithm Box */
+.algorithm-box {
+    background: #fff5f7;
+    border-left: 4px solid #e68a9e;
+    padding: 15px 20px;
+    margin: 15px 0;
+    border-radius: 12px;
+}
+
+.algorithm-box pre {
+    background: #ffeef3;
+    padding: 12px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: #5a3e4b;
+    margin: 10px 0;
+}
+
+.algorithm-box code {
+    background: #ffeef3;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: #e68a9e;
+}
+
+/* Note Card */
+.note-card {
+    background: linear-gradient(135deg, #fff5f7, #ffeef3);
+    border: 1px solid #ffccdd;
+}
+
+.note-card h2 {
+    border-bottom-color: #ffccdd;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .info-section {
+        margin: 20px auto;
+    }
+    
+    .info-card {
+        padding: 20px;
+    }
+    
+    .info-card h2 {
+        font-size: 1.3rem;
+    }
+    
+    .info-card h3 {
+        font-size: 1.1rem;
+    }
+    
+    .info-table {
+        font-size: 0.8rem;
+    }
+    
+    .info-table th,
+    .info-table td {
+        padding: 8px;
+    }
+    
+    .algorithm-box pre {
+        font-size: 0.7rem;
+        overflow-x: auto;
+    }
+}
+
 /* Steps */
 .step {
     display: none;
