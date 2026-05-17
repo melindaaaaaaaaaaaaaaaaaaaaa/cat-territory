@@ -1008,30 +1008,6 @@ function calculateRealtimeConflict() {
     return Math.min(100, totalConflict / pairCount);
 }
 
-            // ================= NEW CAT TRAITS =================
-
-            if (cats[i].status === 'new') {
-
-                conflictValue += cats[i].traits.stress / 10;
-                conflictValue += cats[i].traits.dominance / 20;
-            }
-
-            if (cats[j].status === 'new') {
-
-                conflictValue += cats[j].traits.stress / 10;
-                conflictValue += cats[j].traits.dominance / 20;
-            }
-
-            totalConflict += conflictValue;
-
-            pairCount++;
-        }
-    }
-
-    if (pairCount === 0) return 0;
-
-    return Math.min(100, totalConflict / pairCount);
-}
 
 // ======================= UPDATE GRAPH =======================
 
@@ -1100,12 +1076,6 @@ if (startBtn) {
     });
 }
 
-    if (!animationFrameId) {
-
-        animate();
-    }
-});
-
 // ======================= STOP BUTTON =======================
 
 const stopBtn = document.getElementById('stopAnimation');
@@ -1122,14 +1092,6 @@ if (stopBtn) {
         }
     });
 }
-
-    if (animationFrameId) {
-
-        cancelAnimationFrame(animationFrameId);
-
-        animationFrameId = null;
-    }
-});
 
 // ======================= RESET BUTTON =======================
 
@@ -1160,24 +1122,3 @@ if (resetBtn) {
         visualizeMovement();
     });
 }
-
-    if (animationFrameId) {
-
-        cancelAnimationFrame(animationFrameId);
-
-        animationFrameId = null;
-    }
-
-    simulationHour = 0;
-
-    frameCounter = 0;
-
-    conflictHistory = [];
-
-    if (conflictChart) {
-
-        conflictChart.destroy();
-    }
-
-    visualizeMovement();
-});
