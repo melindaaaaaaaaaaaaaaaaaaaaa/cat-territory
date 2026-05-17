@@ -334,89 +334,139 @@
             </div>
         </div>
 
-        <!-- Step 4: Results & Visualization -->
-        <div id="step4" class="step">
-            <div class="results-container">
-                <!-- Back Button -->
-                <div class="back-top">
-                    <button id="backToStep3" class="btn-back">← Back to House Size</button>
-                </div>
-                
-                <!-- Recommendations -->
-                <div class="card recommendation-card">
-                    <h2>📋 Equipment Recommendations</h2>
-                    <div id="recommendations"></div>
-                </div>
+        <!-- ================= STEP 4: RESULTS ================= -->
 
-                <!-- Conflict Progress Bar -->
-                <div class="card conflict-card">
-                    <h2>⚡ Cat Conflict Level</h2>
-                    <div class="conflict-bar-container">
-                        <div class="conflict-bar" id="conflictBar"></div>
-                    </div>
-                    <div class="conflict-percentage" id="conflictPercentage">0%</div>
-                    <p id="conflictStatus" class="conflict-status"></p>
-                </div>
+<div id="step4" class="step">
 
-                <!-- ======================= VISUALIZATION + GRAPH ======================= -->
+    <div class="results-container">
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <!-- BACK BUTTON -->
 
-<div class="card visualization-card">
+        <div class="back-top">
 
-    <h2>🐾 Cat Movement Over 24 Hours</h2>
-
-    <p class="subtitle">
-        Simulation of cat movement inside your house
-    </p>
-
-    <div class="simulation-layout">
-
-        <!-- ================= CANVAS ================= -->
-
-        <div class="canvas-wrapper">
-
-            <canvas id="catCanvas" width="650" height="500"></canvas>
+            <button id="backToStep3" class="btn-back">
+                ← Back to House Size
+            </button>
 
         </div>
 
-        <!-- ================= GRAPH ================= -->
+        <!-- ================= RECOMMENDATION ================= -->
 
-        <div class="chart-container">
+        <div class="card recommendation-card">
 
-            <h3>📈 Conflict Graph (24 Hours)</h3>
+            <h2>📋 Equipment Recommendations</h2>
 
-            <canvas id="conflictChart"></canvas>
+            <div id="recommendations"></div>
 
         </div>
 
-    </div>
+        <!-- ================= CONFLICT BAR ================= -->
 
-    <!-- ================= LEGEND ================= -->
+        <div class="card conflict-card">
 
-    <div class="legend" id="legend"></div>
+            <h2>⚡ Cat Conflict Level</h2>
 
-    <!-- ================= CONTROLS ================= -->
+            <div class="conflict-bar-container">
 
-    <div class="controls">
+                <div
+                    class="conflict-bar"
+                    id="conflictBar"
+                ></div>
 
-        <button id="startAnimation" class="btn-primary">
-            ▶ Start Animation
-        </button>
+            </div>
 
-        <button id="stopAnimation" class="btn-secondary">
-            ⏸ Stop
-        </button>
+            <div
+                class="conflict-percentage"
+                id="conflictPercentage"
+            >
+                0%
+            </div>
 
-        <button id="resetAnimation" class="btn-secondary">
-            🔄 Reset
-        </button>
+            <p
+                id="conflictStatus"
+                class="conflict-status"
+            ></p>
+
+        </div>
+
+        <!-- ================= VISUALIZATION ================= -->
+
+        <div class="card visualization-card">
+
+            <h2>🐾 Cat Movement Over 24 Hours</h2>
+
+            <p class="subtitle">
+                Simulation of cat movement inside your house
+            </p>
+
+            <!-- ================= LAYOUT ================= -->
+
+            <div class="simulation-layout">
+
+                <!-- ================= CANVAS ================= -->
+
+                <div class="canvas-wrapper">
+
+                    <canvas
+                        id="catCanvas"
+                        width="650"
+                        height="500"
+                    ></canvas>
+
+                </div>
+
+                <!-- ================= GRAPH ================= -->
+
+                <div class="chart-container">
+
+                    <h3>
+                        📈 Conflict Graph (24 Hours)
+                    </h3>
+
+                    <canvas id="conflictChart"></canvas>
+
+                </div>
+
+            </div>
+
+            <!-- ================= LEGEND ================= -->
+
+            <div class="legend" id="legend"></div>
+
+            <!-- ================= CONTROLS ================= -->
+
+            <div class="controls">
+
+                <button
+                    id="startAnimation"
+                    class="btn-primary"
+                >
+                    ▶ Start Animation
+                </button>
+
+                <button
+                    id="stopAnimation"
+                    class="btn-secondary"
+                >
+                    ⏸ Stop
+                </button>
+
+                <button
+                    id="resetAnimation"
+                    class="btn-secondary"
+                >
+                    🔄 Reset
+                </button>
+
+            </div>
+
+        </div>
 
     </div>
 
 </div>
 
-    <script src="script.js"></script>
+<script src="script.js"></script>
+
 </body>
 </html>
