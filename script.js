@@ -8,10 +8,12 @@ let frameCounter = 0;
 // Data Storage
 let cats = [];
 let animationFrameId = null;
-let ctx, canvas, width, height;
+let ctx, canvas;
+const CANVAS_W = 500;
+const CANVAS_H = 500;
 let fightEffects = [];
-let houseArea = 0; // Menyimpan luas rumah yang diinput user
-let houseScale = 1; // Skala untuk konversi luas rumah ke pixel canvas
+let houseArea = 0;
+let houseScale = 1;
 
 // DOM Elements
 const step1 = document.getElementById('step1');
@@ -484,22 +486,16 @@ function visualizeMovement() {
     canvas = document.getElementById('catCanvas');
     ctx = canvas.getContext('2d');
 
-    // Sync canvas internal resolution to its actual rendered size
-    const rect = canvas.getBoundingClientRect();
-    const displayWidth = Math.floor(rect.width) || 500;
-    const displayHeight = Math.floor(rect.height) || 400;
-    canvas.width = displayWidth;
-    canvas.height = displayHeight;
-
-    width = canvas.width;
-    height = canvas.height;
+    // Use fixed canvas resolution so coordinates are always correct
+    canvas.width = CANVAS_W;
+    canvas.height = CANVAS_H;
     
     // Hitung skala: lebar rumah = sqrt(area) (karena bentuk persegi)
     // Asumsi rumah berbentuk persegi, jadi panjang sisi = sqrt(area)
     const houseSide = Math.sqrt(houseArea);
     // Skala: 1 meter dalam rumah = berapa pixel di canvas?
     // Kita mapping sisi rumah ke 90% dari ukuran canvas (biar ada margin)
-    const maxDimension = Math.min(width, height) * 0.85;
+    const maxDimension = Math.min(CANVAS_W, CANVAS_H) * 0.85;
     houseScale = maxDimension / houseSide;
     
     fightEffects = [];
@@ -511,8 +507,8 @@ function visualizeMovement() {
         
         // Konversi ke pixel canvas
         cat.position = {
-            x: (startX * houseScale) + (width - (houseSide * houseScale)) / 2,
-            y: (startY * houseScale) + (height - (houseSide * houseScale)) / 2
+            x: (startX * houseScale) + (CANVAS_W - (houseSide * houseScale)) / 2,
+            y: (startY * houseScale) + (CANVAS_H - (houseSide * houseScale)) / 2
         };
         
         // Arah gerak dalam meter per frame
@@ -554,17 +550,13 @@ conflictHistory = [];
 function drawCanvas() {
     if (!ctx) return;
 
-    // Always use current canvas dimensions
-    width = canvas.width;
-    height = canvas.height;
-    
-    ctx.clearRect(0, 0, width, height);
+    ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
     
     // Hitung offset untuk menempatkan rumah di tengah canvas
     const houseSideMeters = Math.sqrt(houseArea);
     const houseSidePixels = houseSideMeters * houseScale;
-    const offsetX = (width - houseSidePixels) / 2;
-    const offsetY = (height - houseSidePixels) / 2;
+    const offsetX = (CANVAS_W - houseSidePixels) / 2;
+    const offsetY = (CANVAS_H - houseSidePixels) / 2;
     
     // Draw area rumah (background putih dengan border pink)
     ctx.fillStyle = '#fff5f7';
@@ -757,8 +749,8 @@ function updatePositions() {
     // Hitung batas rumah dalam pixel
     const houseSideMeters = Math.sqrt(houseArea);
     const houseSidePixels = houseSideMeters * houseScale;
-    const offsetX = (width - houseSidePixels) / 2;
-    const offsetY = (height - houseSidePixels) / 2;
+    const offsetX = (CANVAS_W - houseSidePixels) / 2;
+    const offsetY = (CANVAS_H - houseSidePixels) / 2;
     const minX = offsetX + 20;
     const maxX = offsetX + houseSidePixels - 20;
     const minY = offsetY + 20;
@@ -1038,6 +1030,7 @@ function updateConflictGraph() {
 
 function animate() {
     updatePositions();
+    drawCanvas();
     frameCounter++;
     if (frameCounter >= 10) {
         frameCounter = 0;
