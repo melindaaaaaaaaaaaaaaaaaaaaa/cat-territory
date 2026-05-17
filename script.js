@@ -774,7 +774,11 @@ function updatePositions() {
                 cats[j].fighting = true;
                 cats[i].fightTimer = 40;
                 cats[j].fightTimer = 40;
-                
+
+            if (fightEffects.length > 15) {
+                fightEffects.shift();
+              }
+    
                 fightEffects.push({
                     x: (cats[i].position.x + cats[j].position.x) / 2,
                     y: (cats[i].position.y + cats[j].position.y) / 2,
@@ -783,16 +787,16 @@ function updatePositions() {
                 
                 const angle = Math.atan2(cats[j].position.y - cats[i].position.y, 
                                          cats[j].position.x - cats[i].position.x);
-                const force = 15;
+                const force = 40;
                 cats[i].position.x -= Math.cos(angle) * force;
                 cats[i].position.y -= Math.sin(angle) * force;
                 cats[j].position.x += Math.cos(angle) * force;
                 cats[j].position.y += Math.sin(angle) * force;
                 
-                cats[i].direction.x += (Math.random() - 0.5) * 1;
-                cats[i].direction.y += (Math.random() - 0.5) * 1;
-                cats[j].direction.x += (Math.random() - 0.5) * 1;
-                cats[j].direction.y += (Math.random() - 0.5) * 1;
+                cats[i].direction.x += (Math.random() - 0.5) * 3;
+                cats[i].direction.y += (Math.random() - 0.5) * 3;
+                cats[j].direction.x += (Math.random() - 0.5) * 3;
+                cats[j].direction.y += (Math.random() - 0.5) * 3;
                 
                 let len = Math.hypot(cats[i].direction.x, cats[i].direction.y);
                 if (len > 0) {
@@ -857,42 +861,6 @@ function updatePositions() {
     
     drawCanvas();
 }
-
-function startAnimation() {
-    if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-        animationFrameId = null;
-        document.getElementById('startAnimation').innerHTML = '▶ Mulai Animasi';
-    } else {
-        function animate() {
-            updatePositions();
-            animationFrameId = requestAnimationFrame(animate);
-        }
-        animate();
-        document.getElementById('startAnimation').innerHTML = '⏸ Berhenti';
-    }
-}
-
-function stopAndReset() {
-    if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-        animationFrameId = null;
-    }
-    visualizeMovement();
-    document.getElementById('startAnimation').innerHTML = '▶ Mulai Animasi';
-}
-
-document.getElementById('startAnimation').addEventListener('click', startAnimation);
-document.getElementById('resetAnimation').addEventListener('click', stopAndReset);
-
-window.addEventListener('load', () => {
-    canvas = document.getElementById('catCanvas');
-    if (canvas) {
-        ctx = canvas.getContext('2d');
-        width = canvas.width;
-        height = canvas.height;
-    }
-});
 
 // ======================= CONFLICT GRAPH =======================
 
@@ -969,47 +937,76 @@ function initializeConflictChart() {
 function calculateRealtimeConflict() {
 
     let totalConflict = 0;
+
     let pairCount = 0;
 
     for (let i = 0; i < cats.length; i++) {
 
         for (let j = i + 1; j < cats.length; j++) {
 
-            const relation = cats[i].relationships[j] || 'roommates';
+            const relation =
+                cats[i].relationships[j] || 'roommates';
 
             const distance = Math.hypot(
+
                 cats[i].position.x - cats[j].position.x,
+
                 cats[i].position.y - cats[j].position.y
             );
 
             let conflictValue = 0;
 
-            // ================= RELATIONSHIP =================
+            // ================= DYNAMIC CONFLICT =================
 
             if (relation === 'conflict') {
 
-                if (distance < 80) {
-                    conflictValue = 90;
-                } else {
-                    conflictValue = 60;
-                }
+                conflictValue = Math.max(0, 100 - distance);
 
-            } else if (relation === 'roommates') {
-
-                if (distance < 60) {
-                    conflictValue = 35;
-                } else {
-                    conflictValue = 15;
-                }
-
-            } else if (relation === 'bestfriends') {
-
-                if (distance < 100) {
-                    conflictValue = 5;
-                } else {
-                    conflictValue = 10;
-                }
             }
+
+            else if (relation === 'roommates') {
+
+                conflictValue = Math.max(0, 50 - distance / 2);
+            }
+
+            else if (relation === 'bestfriends') {
+
+                conflictValue = Math.max(0, 20 - distance / 5);
+            }
+
+            // ================= TRAITS =================
+
+            if (cats[i].status === 'new') {
+
+                conflictValue +=
+                    cats[i].traits.stress * 0.2;
+
+                conflictValue +=
+                    cats[i].traits.dominance * 0.1;
+            }
+
+            if (cats[j].status === 'new') {
+
+                conflictValue +=
+                    cats[j].traits.stress * 0.2;
+
+                conflictValue +=
+                    cats[j].traits.dominance * 0.1;
+            }
+
+            // random fluctuation
+            conflictValue += Math.random() * 5;
+
+            totalConflict += conflictValue;
+
+            pairCount++;
+        }
+    }
+
+    if (pairCount === 0) return 0;
+
+    return Math.min(100, totalConflict / pairCount);
+}
 
             // ================= NEW CAT TRAITS =================
 
@@ -1078,7 +1075,7 @@ function animate() {
 
     // 100 frame = 1 jam simulasi
 
-    if (frameCounter >= 100) {
+    if (frameCounter >= 10) {
 
         frameCounter = 0;
 
