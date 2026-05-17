@@ -1012,18 +1012,14 @@ function calculateRealtimeConflict() {
 // ======================= UPDATE GRAPH =======================
 
 function updateConflictGraph() {
+    if (simulationHour >= 24) return; // grafik sudah penuh, tidak perlu update lagi
+
     const currentConflict = calculateRealtimeConflict();
     conflictHistory.push(currentConflict);
     conflictChart.data.labels.push(`${simulationHour}:00`);
     conflictChart.data.datasets[0].data.push(currentConflict.toFixed(1));
     conflictChart.update();
     simulationHour++;
-
-    if (simulationHour >= 24) {
-        cancelAnimationFrame(animationFrameId);
-        animationFrameId = null;
-        alert('✅ 24-hour simulation finished!');
-    }
 }
 
 // ======================= MAIN ANIMATION LOOP =======================
@@ -1032,7 +1028,8 @@ function animate() {
     updatePositions();
     drawCanvas();
     frameCounter++;
-    if (frameCounter >= 10) {
+    // Update grafik setiap 180 frame (~3 detik per jam simulasi)
+    if (frameCounter >= 180) {
         frameCounter = 0;
         updateConflictGraph();
     }
