@@ -1,3 +1,10 @@
+// ======================= CONFLICT GRAPH VARIABLES =======================
+
+let conflictChart = null;
+let simulationHour = 0;
+let conflictHistory = [];
+let frameCounter = 0;
+
 // Data Storage
 let cats = [];
 let animationFrameId = null;
@@ -520,6 +527,20 @@ function visualizeMovement() {
     
     // Tambahkan informasi luas rumah di canvas
     drawCanvas();
+
+    // ======================= INITIALIZE GRAPH =======================
+
+if (conflictChart) {
+    conflictChart.destroy();
+}
+
+initializeConflictChart();
+
+simulationHour = 0;
+
+frameCounter = 0;
+
+conflictHistory = [];
 }
 
 function drawCanvas() {
@@ -871,4 +892,248 @@ window.addEventListener('load', () => {
         width = canvas.width;
         height = canvas.height;
     }
+});
+
+// ======================= CONFLICT GRAPH =======================
+
+function initializeConflictChart() {
+
+    const chartCanvas = document.getElementById('conflictChart');
+
+    conflictChart = new Chart(chartCanvas, {
+
+        type: 'line',
+
+        data: {
+
+            labels: [],
+
+            datasets: [{
+
+                label: 'Conflict Level',
+
+                data: [],
+
+                borderColor: '#ff6b6b',
+
+                backgroundColor: 'rgba(255,107,107,0.2)',
+
+                fill: true,
+
+                tension: 0.3,
+
+                borderWidth: 3,
+
+                pointRadius: 4
+            }]
+        },
+
+        options: {
+
+            responsive: true,
+
+            animation: false,
+
+            scales: {
+
+                x: {
+
+                    title: {
+
+                        display: true,
+
+                        text: 'Simulation Hour'
+                    }
+                },
+
+                y: {
+
+                    min: 0,
+
+                    max: 100,
+
+                    title: {
+
+                        display: true,
+
+                        text: 'Conflict Level (%)'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// ======================= REALTIME CONFLICT =======================
+
+function calculateRealtimeConflict() {
+
+    let totalConflict = 0;
+    let pairCount = 0;
+
+    for (let i = 0; i < cats.length; i++) {
+
+        for (let j = i + 1; j < cats.length; j++) {
+
+            const relation = cats[i].relationships[j] || 'roommates';
+
+            const distance = Math.hypot(
+                cats[i].position.x - cats[j].position.x,
+                cats[i].position.y - cats[j].position.y
+            );
+
+            let conflictValue = 0;
+
+            // ================= RELATIONSHIP =================
+
+            if (relation === 'conflict') {
+
+                if (distance < 80) {
+                    conflictValue = 90;
+                } else {
+                    conflictValue = 60;
+                }
+
+            } else if (relation === 'roommates') {
+
+                if (distance < 60) {
+                    conflictValue = 35;
+                } else {
+                    conflictValue = 15;
+                }
+
+            } else if (relation === 'bestfriends') {
+
+                if (distance < 100) {
+                    conflictValue = 5;
+                } else {
+                    conflictValue = 10;
+                }
+            }
+
+            // ================= NEW CAT TRAITS =================
+
+            if (cats[i].status === 'new') {
+
+                conflictValue += cats[i].traits.stress / 10;
+                conflictValue += cats[i].traits.dominance / 20;
+            }
+
+            if (cats[j].status === 'new') {
+
+                conflictValue += cats[j].traits.stress / 10;
+                conflictValue += cats[j].traits.dominance / 20;
+            }
+
+            totalConflict += conflictValue;
+
+            pairCount++;
+        }
+    }
+
+    if (pairCount === 0) return 0;
+
+    return Math.min(100, totalConflict / pairCount);
+}
+
+// ======================= UPDATE GRAPH =======================
+
+function updateConflictGraph() {
+
+    const currentConflict = calculateRealtimeConflict();
+
+    conflictHistory.push(currentConflict);
+
+    conflictChart.data.labels.push(`${simulationHour}:00`);
+
+    conflictChart.data.datasets[0].data.push(
+        currentConflict.toFixed(1)
+    );
+
+    conflictChart.update();
+
+    simulationHour++;
+
+    // ================= STOP AT 24 HOURS =================
+
+    if (simulationHour >= 24) {
+
+        cancelAnimationFrame(animationFrameId);
+
+        animationFrameId = null;
+
+        alert('✅ 24-hour simulation finished!');
+    }
+}
+
+// ======================= MAIN ANIMATION LOOP =======================
+
+function animate() {
+
+    updatePositions();
+
+    drawCanvas();
+
+    frameCounter++;
+
+    // 100 frame = 1 jam simulasi
+
+    if (frameCounter >= 100) {
+
+        frameCounter = 0;
+
+        updateConflictGraph();
+    }
+
+    animationFrameId = requestAnimationFrame(animate);
+}
+
+// ======================= START BUTTON =======================
+
+document.getElementById('startAnimation')
+.addEventListener('click', () => {
+
+    if (!animationFrameId) {
+
+        animate();
+    }
+});
+
+// ======================= STOP BUTTON =======================
+
+document.getElementById('stopAnimation')
+.addEventListener('click', () => {
+
+    if (animationFrameId) {
+
+        cancelAnimationFrame(animationFrameId);
+
+        animationFrameId = null;
+    }
+});
+
+// ======================= RESET BUTTON =======================
+
+document.getElementById('resetAnimation')
+.addEventListener('click', () => {
+
+    if (animationFrameId) {
+
+        cancelAnimationFrame(animationFrameId);
+
+        animationFrameId = null;
+    }
+
+    simulationHour = 0;
+
+    frameCounter = 0;
+
+    conflictHistory = [];
+
+    if (conflictChart) {
+
+        conflictChart.destroy();
+    }
+
+    visualizeMovement();
 });
