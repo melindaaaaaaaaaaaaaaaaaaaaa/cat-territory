@@ -1025,13 +1025,17 @@ function updateConflictGraph() {
 // ======================= MAIN ANIMATION LOOP =======================
 
 function animate() {
-    updatePositions();
-    drawCanvas();
-    frameCounter++;
-    // Update grafik setiap 180 frame (~3 detik per jam simulasi)
-    if (frameCounter >= 180) {
-        frameCounter = 0;
-        updateConflictGraph();
+    try {
+        updatePositions();
+        drawCanvas();
+        frameCounter++;
+        // Update grafik setiap 180 frame (~3 detik per jam simulasi)
+        if (frameCounter >= 180) {
+            frameCounter = 0;
+            updateConflictGraph();
+        }
+    } catch(e) {
+        console.error('Animation error:', e);
     }
     animationFrameId = requestAnimationFrame(animate);
 }
