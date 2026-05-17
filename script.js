@@ -1087,8 +1087,18 @@ function animate() {
 
 // ======================= START BUTTON =======================
 
-document.getElementById('startAnimation')
-.addEventListener('click', () => {
+const startBtn = document.getElementById('startAnimation');
+
+if (startBtn) {
+
+    startBtn.addEventListener('click', () => {
+
+        if (!animationFrameId) {
+
+            animate();
+        }
+    });
+}
 
     if (!animationFrameId) {
 
@@ -1098,8 +1108,20 @@ document.getElementById('startAnimation')
 
 // ======================= STOP BUTTON =======================
 
-document.getElementById('stopAnimation')
-.addEventListener('click', () => {
+const stopBtn = document.getElementById('stopAnimation');
+
+if (stopBtn) {
+
+    stopBtn.addEventListener('click', () => {
+
+        if (animationFrameId) {
+
+            cancelAnimationFrame(animationFrameId);
+
+            animationFrameId = null;
+        }
+    });
+}
 
     if (animationFrameId) {
 
@@ -1111,8 +1133,33 @@ document.getElementById('stopAnimation')
 
 // ======================= RESET BUTTON =======================
 
-document.getElementById('resetAnimation')
-.addEventListener('click', () => {
+const resetBtn = document.getElementById('resetAnimation');
+
+if (resetBtn) {
+
+    resetBtn.addEventListener('click', () => {
+
+        if (animationFrameId) {
+
+            cancelAnimationFrame(animationFrameId);
+
+            animationFrameId = null;
+        }
+
+        simulationHour = 0;
+
+        frameCounter = 0;
+
+        conflictHistory = [];
+
+        if (conflictChart) {
+
+            conflictChart.destroy();
+        }
+
+        visualizeMovement();
+    });
+}
 
     if (animationFrameId) {
 
