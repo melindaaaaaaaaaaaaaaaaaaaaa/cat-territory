@@ -853,51 +853,185 @@ html {
 /* ======================= SIMULATION + GRAPH LAYOUT ======================= */
 
 .simulation-layout {
+
     display: flex;
-    gap: 25px;
+
+    gap: 35px;
+
     justify-content: center;
+
     align-items: flex-start;
+
     flex-wrap: wrap;
-    margin-top: 20px;
+
+    margin-top: 25px;
 }
+
+/* ======================= CANVAS ======================= */
 
 .canvas-wrapper {
+
     background: #fff5f7;
-    border-radius: 20px;
-    padding: 15px;
+
+    border-radius: 25px;
+
+    padding: 18px;
+
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
 }
 
-.chart-container {
-    width: 380px;
-    min-height: 500px;
+#catCanvas {
+
     background: #fff5f7;
+
     border-radius: 20px;
-    padding: 20px;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.03);
+
+    display: block;
+
+    max-width: 100%;
+}
+
+/* ======================= GRAPH ======================= */
+
+.chart-container {
+
+    width: 520px;
+
+    min-height: 560px;
+
+    background: #fff5f7;
+
+    border-radius: 25px;
+
+    padding: 25px;
+
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: flex-start;
 }
 
 .chart-container h3 {
+
     color: #e68a9e;
-    margin-bottom: 15px;
+
+    margin-bottom: 20px;
+
     text-align: center;
+
+    font-size: 1.2rem;
 }
 
+/* ======================= CHART ======================= */
+
 #conflictChart {
+
     width: 100% !important;
-    height: 400px !important;
+
+    height: 460px !important;
+
+    background: white;
+
+    border-radius: 20px;
+
+    padding: 15px;
+}
+
+/* ======================= CONTROLS ======================= */
+
+.controls {
+
+    display: flex;
+
+    gap: 15px;
+
+    justify-content: center;
+
+    margin-top: 25px;
+
+    flex-wrap: wrap;
+}
+
+.controls button {
+
+    min-width: 180px;
+}
+
+/* ======================= LEGEND ======================= */
+
+.legend {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 15px;
+
+    margin-top: 20px;
+
+    flex-wrap: wrap;
+}
+
+.legend-item {
+
+    background: #fff5f7;
+
+    padding: 8px 15px;
+
+    border-radius: 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    font-size: 0.9rem;
 }
 
 /* ======================= RESPONSIVE ======================= */
 
-@media (max-width: 900px) {
+@media (max-width: 1200px) {
 
     .simulation-layout {
+
         flex-direction: column;
+
         align-items: center;
     }
 
     .chart-container {
+
         width: 100%;
-        max-width: 650px;
+
+        max-width: 700px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .chart-container {
+
+        min-height: auto;
+
+        padding: 20px;
+    }
+
+    #conflictChart {
+
+        height: 350px !important;
+    }
+
+    .controls {
+
+        flex-direction: column;
+    }
+
+    .controls button {
+
+        width: 100%;
     }
 }
