@@ -358,20 +358,44 @@
                     <p id="conflictStatus" class="conflict-status"></p>
                 </div>
 
-                <!-- Visualization Canvas -->
-                <div class="card visualization-card">
-                    <h2>🐾 Cat Movement Over 24 Hours</h2>
-                    <p class="subtitle">Simulation of cat movement inside your house</p>
-                    <canvas id="catCanvas" width="800" height="500"></canvas>
-                    <div class="legend" id="legend"></div>
-                    <div class="controls">
-                        <button id="startAnimation" class="btn-primary">▶ Start Animation</button>
-                        <button id="resetAnimation" class="btn-secondary">🔄 Reset</button>
-                    </div>
-                </div>
-            </div>
+                <!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="card visualization-card">
+    <h2>🐾 Cat Movement Over 24 Hours</h2>
+    <p class="subtitle">Simulation of cat movement inside your house</p>
+
+    <div class="simulation-layout">
+
+        <!-- CANVAS ANIMASI -->
+        <div class="canvas-wrapper">
+            <canvas id="catCanvas" width="600" height="500"></canvas>
         </div>
+
+        <!-- GRAFIK KONFLIK -->
+        <div class="chart-container">
+            <h3>📈 Conflict Graph (24 Hours)</h3>
+            <canvas id="conflictChart"></canvas>
+        </div>
+
     </div>
+
+    <div class="legend" id="legend"></div>
+
+    <div class="controls">
+        <button id="startAnimation" class="btn-primary">
+            ▶ Start Animation
+        </button>
+
+        <button id="stopAnimation" class="btn-secondary">
+            ⏸ Stop
+        </button>
+
+        <button id="resetAnimation" class="btn-secondary">
+            🔄 Reset
+        </button>
+    </div>
+</div>
 
     <script src="script.js"></script>
 </body>
