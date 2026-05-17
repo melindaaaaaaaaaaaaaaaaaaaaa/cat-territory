@@ -858,8 +858,6 @@ function updatePositions() {
             }
         }
     });
-    
-    drawCanvas();
 }
 
 // ======================= CONFLICT GRAPH =======================
@@ -1007,34 +1005,19 @@ function calculateRealtimeConflict() {
 
     return Math.min(100, totalConflict / pairCount);
 }
-
-
 // ======================= UPDATE GRAPH =======================
 
 function updateConflictGraph() {
-
     const currentConflict = calculateRealtimeConflict();
-
     conflictHistory.push(currentConflict);
-
     conflictChart.data.labels.push(`${simulationHour}:00`);
-
-    conflictChart.data.datasets[0].data.push(
-        currentConflict.toFixed(1)
-    );
-
+    conflictChart.data.datasets[0].data.push(currentConflict.toFixed(1));
     conflictChart.update();
-
     simulationHour++;
 
-    // ================= STOP AT 24 HOURS =================
-
     if (simulationHour >= 24) {
-
         cancelAnimationFrame(animationFrameId);
-
         animationFrameId = null;
-
         alert('✅ 24-hour simulation finished!');
     }
 }
@@ -1042,35 +1025,21 @@ function updateConflictGraph() {
 // ======================= MAIN ANIMATION LOOP =======================
 
 function animate() {
-
     updatePositions();
-
-    drawCanvas();
-
     frameCounter++;
-
-    // 100 frame = 1 jam simulasi
-
     if (frameCounter >= 10) {
-
         frameCounter = 0;
-
         updateConflictGraph();
     }
-
     animationFrameId = requestAnimationFrame(animate);
 }
 
 // ======================= START BUTTON =======================
 
 const startBtn = document.getElementById('startAnimation');
-
 if (startBtn) {
-
     startBtn.addEventListener('click', () => {
-
         if (!animationFrameId) {
-
             animate();
         }
     });
@@ -1079,15 +1048,10 @@ if (startBtn) {
 // ======================= STOP BUTTON =======================
 
 const stopBtn = document.getElementById('stopAnimation');
-
 if (stopBtn) {
-
     stopBtn.addEventListener('click', () => {
-
         if (animationFrameId) {
-
             cancelAnimationFrame(animationFrameId);
-
             animationFrameId = null;
         }
     });
@@ -1096,29 +1060,18 @@ if (stopBtn) {
 // ======================= RESET BUTTON =======================
 
 const resetBtn = document.getElementById('resetAnimation');
-
 if (resetBtn) {
-
     resetBtn.addEventListener('click', () => {
-
         if (animationFrameId) {
-
             cancelAnimationFrame(animationFrameId);
-
             animationFrameId = null;
         }
-
         simulationHour = 0;
-
         frameCounter = 0;
-
         conflictHistory = [];
-
         if (conflictChart) {
-
             conflictChart.destroy();
         }
-
         visualizeMovement();
     });
 }
