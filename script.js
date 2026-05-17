@@ -997,7 +997,7 @@ function calculateRealtimeConflict() {
 // ======================= UPDATE GRAPH =======================
 
 function updateConflictGraph() {
-    if (simulationHour >= 24) return; // grafik sudah penuh, tidak perlu update lagi
+    if (simulationHour > 24) return;
 
     const currentConflict = calculateRealtimeConflict();
     conflictHistory.push(currentConflict);
