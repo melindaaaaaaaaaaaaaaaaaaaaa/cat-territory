@@ -483,6 +483,14 @@ function calculateConflictLevel() {
 function visualizeMovement() {
     canvas = document.getElementById('catCanvas');
     ctx = canvas.getContext('2d');
+
+    // Sync canvas internal resolution to its actual rendered size
+    const rect = canvas.getBoundingClientRect();
+    const displayWidth = Math.floor(rect.width) || 500;
+    const displayHeight = Math.floor(rect.height) || 400;
+    canvas.width = displayWidth;
+    canvas.height = displayHeight;
+
     width = canvas.width;
     height = canvas.height;
     
@@ -545,6 +553,10 @@ conflictHistory = [];
 
 function drawCanvas() {
     if (!ctx) return;
+
+    // Always use current canvas dimensions
+    width = canvas.width;
+    height = canvas.height;
     
     ctx.clearRect(0, 0, width, height);
     
