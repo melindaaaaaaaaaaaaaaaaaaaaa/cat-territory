@@ -958,46 +958,31 @@ function calculateRealtimeConflict() {
 
             let conflictValue = 0;
 
-            // ================= DYNAMIC CONFLICT =================
-
+            // Base conflict dari relasi (faktor utama)
             if (relation === 'conflict') {
-
-                conflictValue = Math.max(0, 100 - distance);
-
+                conflictValue = 70;
+                conflictValue += Math.max(0, 15 - distance / 20);
+            } else if (relation === 'roommates') {
+                conflictValue = 30;
+                conflictValue += Math.max(0, 10 - distance / 30);
+            } else if (relation === 'bestfriends') {
+                conflictValue = 5;
+                conflictValue += Math.max(0, 5 - distance / 50);
             }
 
-            else if (relation === 'roommates') {
-
-                conflictValue = Math.max(0, 50 - distance / 2);
-            }
-
-            else if (relation === 'bestfriends') {
-
-                conflictValue = Math.max(0, 20 - distance / 5);
-            }
-
-            // ================= TRAITS =================
-
+            // Traits modifier
             if (cats[i].status === 'new') {
-
-                conflictValue +=
-                    cats[i].traits.stress * 0.2;
-
-                conflictValue +=
-                    cats[i].traits.dominance * 0.1;
+                conflictValue += cats[i].traits.stress * 0.1;
+                conflictValue += (cats[i].traits.dominance - 50) * 0.05;
             }
 
             if (cats[j].status === 'new') {
-
-                conflictValue +=
-                    cats[j].traits.stress * 0.2;
-
-                conflictValue +=
-                    cats[j].traits.dominance * 0.1;
+                conflictValue += cats[j].traits.stress * 0.1;
+                conflictValue += (cats[j].traits.dominance - 50) * 0.05;
             }
 
-            // random fluctuation
-            conflictValue += Math.random() * 5;
+            // Random fluctuation kecil
+            conflictValue += (Math.random() - 0.5) * 6;
 
             totalConflict += conflictValue;
 
